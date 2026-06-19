@@ -1,10 +1,11 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from fastapi.responses import RedirectResponse
 from urllib.parse import urlencode
 from app.config import settings
 import httpx
 import jwt
 from datetime import datetime, timedelta, timezone
+from app.dependencies.auth import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -83,3 +84,9 @@ async def callback(code: str):
 
     return {"token": app_token, "user": {"email": userinfo["email"], "name": userinfo["name"]}}
 
+
+
+
+@router.get("/me")
+async def me(user=Depends(get_current_user)):
+    return user
