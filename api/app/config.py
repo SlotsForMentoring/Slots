@@ -8,6 +8,8 @@ class Settings(BaseSettings):
     app_jwt_secret: str
     database_url: str
     cors_origins: str = "http://localhost:5173"
+    admin_emails: str = ""
+    mock_data: bool = False
 
     class Config:
         env_file = ".env"
