@@ -7,6 +7,10 @@ class Settings(BaseSettings):
 
     database_url: str
     cors_origins: str = "http://localhost:5173"
+    google_client_id: str
+    google_client_secret: str
+    google_redirect_uri: str
+    app_jwt_secret: str
 
     @computed_field
     @property
