@@ -128,6 +128,7 @@ See each epic doc for full ticket breakdown. Quick summary:
 | Booking: create booking endpoint | 3 | Dev C | 1 day |
 | Booking: list my bookings endpoint | 3 | Dev C | 0.5 day |
 | Booking: model + migration | 3 | Dev C | 0.5 day |
+| Frontend: structure (Atomic Design) | 5 | Dev D | 0.5 day |
 | Frontend: auth flow (login/logout) | 5 | Dev D | 1 day |
 | Frontend: routing + layout + navbar | 5 | Dev D | 1 day |
 | Frontend: available slots page | 5 | Dev D | 1.5 days |
