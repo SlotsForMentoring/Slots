@@ -41,6 +41,31 @@ When a real endpoint is deployed, the dev removes the mock import and the API ca
 
 ## Tickets
 
+### 5.0 — Frontend structure (Atomic Design)
+Create the directory structure following Atomic Design methodology and set up the base API client with mock data. Document the component classification rule in a README inside `slots/`.
+
+Directory structure:
+```
+slots/src/
+├── components/
+│   ├── atoms/         ← reusable base elements (Button, Input, Badge)
+│   ├── molecules/     ← combine atoms, single responsibility (SlotCard, UserRow)
+│   └── organisms/     ← full UI sections (Navbar, SlotList, SlotForm)
+├── pages/             ← one per route, assembles organisms
+├── layouts/           ← page wrappers (navbar + content area)
+├── context/           ← React context (auth)
+├── services/          ← API client
+└── mocks/             ← mock data for development
+```
+
+Classification rule:
+- **Atom**: could be used in any project (Button, Input, Avatar)
+- **Molecule**: combines atoms, one function (SlotCard, BookingCard)
+- **Organism**: entire section of a page (Navbar, SlotList with filters)
+- **Page**: what the user sees at a route
+
+Files: `slots/src/` directories, `slots/src/services/api.js`, `slots/src/mocks/*.json`, `slots/README.md`
+
 ### 5.1 — Auth flow (login/logout + token storage)
 Implement Google login redirect, token storage in localStorage, and logout. Create an auth context that provides the current user and token to all components.
 - Consumes: `GET /auth/login`, `GET /auth/me`
