@@ -41,6 +41,8 @@ Create a new time slot offering. Requires `role: volunteer`.
 
 List all slots offered by the authenticated volunteer. Requires `role: volunteer`.
 
+Use this endpoint to manage slots (create, delete, see status). To see booking details from the session perspective, use `GET /bookings/mine` instead.
+
 **Query params:** `?include_past=false` (optional, default false)
 
 **Response 200:**
