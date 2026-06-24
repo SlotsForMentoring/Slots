@@ -48,14 +48,18 @@ Create `Booking` SQLAlchemy model and Alembic migration. UNIQUE constraint on `s
 - Files: `api/app/models/booking.py`, `api/alembic/versions/`, `api/alembic/env.py`
 
 ### 3.2 — Create booking endpoint
-`POST /bookings`. Protected by `require_role("trainee")`. Validates slot availability and notice window. Uses DB-level UNIQUE constraint to prevent race conditions.
+`POST /bookings`. Protected by `require_role("trainee")`. Only trainees can book — volunteers and admins cannot. Validates slot availability and notice window. Uses DB-level UNIQUE constraint to prevent race conditions.
 - Input: `{ slot_id, agenda? }`
-- Output: `BookingResponse` (201)
+- Output: `BookingResponse` (201) — includes `trainee_name`
 - Contract: [bookings.md](../contracts/bookings.md)
 - Files: `api/app/routers/bookings.py`, `api/app/crud/bookings.py`, `api/app/schemas/booking.py`
 
 ### 3.3 — List my bookings endpoint
-`GET /bookings/mine`. Works for trainee (sees their bookings) and volunteer (sees bookings on their slots).
+`GET /bookings/mine`. Any authenticated user. The query changes based on the user's role:
+- **Trainee**: `WHERE trainee_id = current_user.id`
+- **Volunteer**: `WHERE slot.volunteer_id = current_user.id`
+
+Both return the same response shape (includes `trainee_name` and `volunteer_name`).
 - Input: optional `?status=confirmed`
 - Output: list of `BookingResponse`
 - Contract: [bookings.md](../contracts/bookings.md)
