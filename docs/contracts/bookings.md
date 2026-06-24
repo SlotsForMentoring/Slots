@@ -49,12 +49,14 @@ Server validates:
 
 List bookings for the authenticated user. Works for both trainees and volunteers.
 
-- Trainee sees their booked sessions
-- Volunteer sees bookings on their slots
+- **Trainee**: sees their booked sessions (query: `WHERE trainee_id = current_user.id`)
+- **Volunteer**: sees bookings on their slots (query: `WHERE slot.volunteer_id = current_user.id`)
+
+Both views return the same response shape, which includes both trainee and volunteer info so it works for either perspective.
 
 **Query params:** `?status=confirmed` (optional filter)
 
-**Response 200 (trainee view):**
+**Response 200:**
 ```json
 [
   {
@@ -65,6 +67,7 @@ List bookings for the authenticated user. Works for both trainees and volunteers
       "start_time": "2026-07-01T14:00:00Z",
       "end_time": "2026-07-01T15:00:00Z"
     },
+    "trainee_name": "John Smith",
     "agenda": "Help with React hooks exercise",
     "status": "confirmed",
     "created_at": "2026-06-22T10:00:00Z"
