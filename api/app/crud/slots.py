@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy import select, and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models.slot import Slot
+from app.models.slots import Slot
 
 async def create_slot(
     session: AsyncSession,
