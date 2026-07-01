@@ -9,6 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models import Base
 
 if TYPE_CHECKING:
+    from app.models.booking import Booking
     from app.models.user import User
 
 
@@ -30,6 +31,7 @@ class Slot(Base):
     )
 
     volunteer: Mapped["User"] = relationship("User", lazy="selectin")
+    booking: Mapped["Booking | None"] = relationship("Booking", back_populates="slot", uselist=False, lazy="selectin")
 
     @property
     def volunteer_name(self) -> str:
@@ -37,4 +39,4 @@ class Slot(Base):
 
     @property
     def is_booked(self) -> bool:
-        return False
+        return self.booking is not None
