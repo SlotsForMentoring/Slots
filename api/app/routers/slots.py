@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud import slots as crud
 from app.database import get_db
-from app.dependencies.auth import get_current_user
+from app.dependencies.auth import get_current_user, require_role
 from app.models.user import User
 from app.schemas.slot import SlotCreate, SlotResponse, AvailableSlotResponse
 
@@ -16,14 +16,8 @@ router = APIRouter(prefix="/slots", tags=["slots"])
 async def create_slot(
     body: SlotCreate,
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_role("volunteer")),
 ):
-    if current_user.role != "volunteer":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Volunteer access required",
-        )
-
     duration = body.end_time - body.start_time
     if duration.total_seconds() != 3600:
         raise HTTPException(
@@ -60,13 +54,8 @@ async def create_slot(
 async def get_my_slots(
     include_past: bool = False,
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_role("volunteer")),
 ):
-    if current_user.role != "volunteer":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Volunteer access required",
-        )
     slots = await crud.get_slots_by_volunteer(
         session=session,
         volunteer_id=current_user.id,
@@ -79,14 +68,8 @@ async def get_my_slots(
 async def delete_slot(
     slot_id: UUID,
     session: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(require_role("volunteer")),
 ):
-    if current_user.role != "volunteer":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Volunteer access required",
-        )
-
     result = await crud.delete_slot(
         session=session,
         slot_id=slot_id,
@@ -103,6 +86,12 @@ async def delete_slot(
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Not your slot",
+        )
+
+    if result == "booked":
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Cannot delete a booked slot",
         )
 
 
