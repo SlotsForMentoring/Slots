@@ -33,7 +33,7 @@ async def create_slot(
 
     if body.start_time < datetime.now(timezone.utc):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail="Slot must be in the future",
         )
 
