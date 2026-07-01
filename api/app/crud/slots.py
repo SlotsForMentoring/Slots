@@ -5,6 +5,7 @@ from sqlalchemy import select, and_, func, cast
 from sqlalchemy.dialects.postgresql import INTERVAL
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.models.booking import Booking
 from app.models.slots import Slot
 
 
@@ -72,6 +73,12 @@ async def delete_slot(
 
     if slot.volunteer_id != volunteer_id:
         return "not_yours"
+
+    booking_result = await session.execute(
+        select(Booking).where(Booking.slot_id == slot_id)
+    )
+    if booking_result.scalar_one_or_none() is not None:
+        return "booked"
 
     await session.delete(slot)
     await session.commit()
