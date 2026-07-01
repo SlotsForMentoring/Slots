@@ -1,0 +1,20 @@
+[
+  {
+    "id": "u1",
+    "name": "Alice Volunteer",
+    "email": "alice@test.com",
+    "role": "volunteer"
+  },
+  {
+    "id": "u2",
+    "name": "Tom Trainee",
+    "email": "tom@test.com",
+    "role": "trainee"
+  },
+  {
+    "id": "u3",
+    "name": "Admin User",
+    "email": "admin@test.com",
+    "role": "admin"
+  }
+]
