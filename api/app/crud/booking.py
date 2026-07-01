@@ -2,8 +2,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.booking import Booking
-from app.models.user import User
-from app.models import Slot  # assuming exists
+from app.models.slots import Slot
 
 
 async def get_slot(session: AsyncSession, slot_id):
