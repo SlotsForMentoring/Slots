@@ -1,10 +1,12 @@
 from datetime import datetime, timezone
 from uuid import UUID
 
-from sqlalchemy import select, and_
+from sqlalchemy import select, and_, func, cast
+from sqlalchemy.dialects.postgresql import INTERVAL
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.slots import Slot
+
 
 async def create_slot(
     session: AsyncSession,
@@ -24,6 +26,7 @@ async def create_slot(
     await session.refresh(slot)
     return slot
 
+
 async def check_overlap(
     session: AsyncSession,
     volunteer_id: UUID,
@@ -41,6 +44,7 @@ async def check_overlap(
     )
     return result.scalar_one_or_none() is not None
 
+
 async def get_slots_by_volunteer(
     session: AsyncSession,
     volunteer_id: UUID,
@@ -52,33 +56,39 @@ async def get_slots_by_volunteer(
     result = await session.execute(query)
     return list(result.scalars().all())
 
+
 async def delete_slot(
     session: AsyncSession,
     slot_id: UUID,
     volunteer_id: UUID,
-) -> Slot | None:
+) -> str:
     result = await session.execute(
-        select(Slot).where(
-            and_(
-                Slot.id == slot_id,
-                Slot.volunteer_id == volunteer_id,
-            )
-        )
+        select(Slot).where(Slot.id == slot_id)
     )
     slot = result.scalar_one_or_none()
+
     if slot is None:
-        return None
+        return "not_found"
+
+    if slot.volunteer_id != volunteer_id:
+        return "not_yours"
+
     await session.delete(slot)
     await session.commit()
-    return slot
+    return "deleted"
+
 
 async def get_available_slots(
     session: AsyncSession,
 ) -> list[Slot]:
     now = datetime.now(timezone.utc)
+    notice_interval = cast(
+        func.concat(Slot.min_booking_notice_hours, " hours"),
+        INTERVAL,
+    )
     result = await session.execute(
         select(Slot).where(
-            Slot.start_time > now
+            Slot.start_time > func.now() + notice_interval
         )
     )
     return list(result.scalars().all())

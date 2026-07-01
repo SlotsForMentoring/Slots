@@ -7,9 +7,10 @@ from app.crud import slots as crud
 from app.database import get_db
 from app.dependencies.auth import get_current_user
 from app.models.user import User
-from app.schemas.slot import SlotCreate, SlotResponse
+from app.schemas.slot import SlotCreate, SlotResponse, AvailableSlotResponse
 
 router = APIRouter(prefix="/slots", tags=["slots"])
+
 
 @router.post("", response_model=SlotResponse, status_code=status.HTTP_201_CREATED)
 async def create_slot(
@@ -20,14 +21,14 @@ async def create_slot(
     if current_user.role != "volunteer":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only volunteers can create slots",
+            detail="Volunteer access required",
         )
 
     duration = body.end_time - body.start_time
     if duration.total_seconds() != 3600:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Slot duration must be exactly 1 hour",
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Slot must be exactly 1 hour",
         )
 
     if body.start_time < datetime.now(timezone.utc):
@@ -42,7 +43,7 @@ async def create_slot(
     if overlap:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="You already have a slot at this time",
+            detail="Overlapping slot exists",
         )
 
     slot = await crud.create_slot(
@@ -54,6 +55,7 @@ async def create_slot(
     )
     return slot
 
+
 @router.get("/mine", response_model=list[SlotResponse])
 async def get_my_slots(
     include_past: bool = False,
@@ -63,7 +65,7 @@ async def get_my_slots(
     if current_user.role != "volunteer":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only volunteers can view their slots",
+            detail="Volunteer access required",
         )
     slots = await crud.get_slots_by_volunteer(
         session=session,
@@ -71,6 +73,7 @@ async def get_my_slots(
         include_past=include_past,
     )
     return slots
+
 
 @router.delete("/{slot_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_slot(
@@ -81,20 +84,29 @@ async def delete_slot(
     if current_user.role != "volunteer":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Only volunteers can delete slots",
+            detail="Volunteer access required",
         )
-    slot = await crud.delete_slot(
+
+    result = await crud.delete_slot(
         session=session,
         slot_id=slot_id,
         volunteer_id=current_user.id,
     )
-    if slot is None:
+
+    if result == "not_found":
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Slot not found or you don't own it",
+            detail="Slot not found",
         )
-    
-@router.get("/available", response_model=list[SlotResponse])
+
+    if result == "not_yours":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Not your slot",
+        )
+
+
+@router.get("/available", response_model=list[AvailableSlotResponse])
 async def get_available_slots(
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),

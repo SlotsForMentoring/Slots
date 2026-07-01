@@ -1,11 +1,15 @@
 import uuid
 from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, ForeignKey, Integer
 from sqlalchemy.dialects.postgresql import UUID as Uuid
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models import Base
+
+if TYPE_CHECKING:
+    from app.models.user import User
 
 
 class Slot(Base):
@@ -24,3 +28,13 @@ class Slot(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
+
+    volunteer: Mapped["User"] = relationship("User", lazy="selectin")
+
+    @property
+    def volunteer_name(self) -> str:
+        return self.volunteer.name if self.volunteer else ""
+
+    @property
+    def is_booked(self) -> bool:
+        return False
