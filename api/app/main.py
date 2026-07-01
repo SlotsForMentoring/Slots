@@ -9,10 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.database import engine, get_db
-from app.routers import auth
+from app.routers import auth, booking, slots
 from app.schemas.health import HealthResponse
-
-from app.routers import slots
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +31,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(slots.router)
 app.include_router(auth.router)
+app.include_router(slots.router)
+app.include_router(booking.router)
 
 
 @app.exception_handler(Exception)
