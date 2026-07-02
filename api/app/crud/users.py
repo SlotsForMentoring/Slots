@@ -3,6 +3,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.models.user import User
 
 
@@ -48,11 +49,13 @@ async def upsert_user(
 ) -> User:
     user = await get_user_by_google_id(session, google_id)
     if user is None:
+        role = "admin" if settings.admin_email and email == settings.admin_email else "trainee"
         user = User(
             google_id=google_id,
             email=email,
             name=name,
             profile_picture=profile_picture,
+            role=role,
         )
         session.add(user)
     else:

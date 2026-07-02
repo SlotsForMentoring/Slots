@@ -11,6 +11,7 @@ class Settings(BaseSettings):
     google_client_secret: str
     google_redirect_uri: str
     app_jwt_secret: str
+    admin_email: str = ""
 
     @computed_field
     @property
