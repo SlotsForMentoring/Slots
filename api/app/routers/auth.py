@@ -1,13 +1,14 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Response
 from fastapi.responses import RedirectResponse
 from httpx import HTTPStatusError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.crud.users import upsert_user
 from app.database import get_db
 from app.dependencies.auth import get_current_user
 from app.models.user import User
-from app.schemas.user import AuthCallbackResponse, UserResponse
+from app.schemas.user import UserResponse
 from app.services.auth import (
     create_access_token,
     exchange_code_for_userinfo,
@@ -22,7 +23,7 @@ async def login():
     return RedirectResponse(url=get_google_auth_url())
 
 
-@router.get("/callback", response_model=AuthCallbackResponse)
+@router.get("/callback")
 async def callback(code: str, session: AsyncSession = Depends(get_db)):
     try:
         userinfo = await exchange_code_for_userinfo(code)
@@ -38,7 +39,16 @@ async def callback(code: str, session: AsyncSession = Depends(get_db)):
     )
 
     token = create_access_token(user.id, user.email, user.role)
-    return AuthCallbackResponse(token=token, user=UserResponse.model_validate(user))
+    response = RedirectResponse(url=settings.frontend_url, status_code=302)
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        samesite="lax",
+        secure=False,
+        max_age=86400,
+    )
+    return response
 
 
 @router.get("/me", response_model=UserResponse)
