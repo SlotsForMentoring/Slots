@@ -51,6 +51,13 @@ async def callback(code: str, session: AsyncSession = Depends(get_db)):
     return response
 
 
+@router.post("/logout")
+async def logout():
+    response = Response(status_code=200)
+    response.delete_cookie(key="access_token")
+    return response
+
+
 @router.get("/me", response_model=UserResponse)
 async def me(user: User = Depends(get_current_user)):
     return UserResponse.model_validate(user)
