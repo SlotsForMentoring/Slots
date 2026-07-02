@@ -4,17 +4,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.user import User
 
 
-async def get_all_users(
-    session: AsyncSession,
-    role: str | None = None,
-) -> list[User]:
-    query = select(User).order_by(User.created_at)
-    if role is not None:
-        query = query.where(User.role == role)
-    result = await session.execute(query)
-    return list(result.scalars().all())
-
-
 async def get_user_by_google_id(session: AsyncSession, google_id: str) -> User | None:
     result = await session.execute(
         select(User).where(User.google_id == google_id)
