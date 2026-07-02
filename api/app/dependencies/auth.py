@@ -1,8 +1,7 @@
 from collections.abc import Callable
 
 import jwt
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi import Depends, HTTPException, Request, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,16 +9,20 @@ from app.config import settings
 from app.database import get_db
 from app.models.user import User
 
-security = HTTPBearer()
-
 
 async def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(security),
+    request: Request,
     session: AsyncSession = Depends(get_db),
 ) -> User:
+    token = request.cookies.get("access_token")
+    if token is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Not authenticated",
+        )
     try:
         payload = jwt.decode(
-            credentials.credentials,
+            token,
             settings.app_jwt_secret,
             algorithms=["HS256"],
         )
