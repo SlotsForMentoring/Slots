@@ -1,14 +1,7 @@
 import uuid
 from datetime import datetime
-from enum import StrEnum
 
 from pydantic import BaseModel
-
-
-class Role(StrEnum):
-    TRAINEE = "trainee"
-    VOLUNTEER = "volunteer"
-    ADMIN = "admin"
 
 
 class UserResponse(BaseModel):
@@ -20,10 +13,6 @@ class UserResponse(BaseModel):
     created_at: datetime
 
     model_config = {"from_attributes": True}
-
-
-class RoleUpdate(BaseModel):
-    role: Role
 
 
 class AuthCallbackResponse(BaseModel):
