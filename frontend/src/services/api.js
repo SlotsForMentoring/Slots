@@ -20,8 +20,9 @@ async function request(endpoint, { method = "GET", body, mock } = {}) {
         throw new Error(`API error: ${res.status}`)
     }
 
-    if (res.status === 204) return null
-    return res.json()
+    const text = await res.text()
+    if (!text) return null
+    return JSON.parse(text)
 }
 
 
