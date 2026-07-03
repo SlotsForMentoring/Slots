@@ -44,8 +44,8 @@ async def callback(code: str, session: AsyncSession = Depends(get_db)):
         key="access_token",
         value=token,
         httponly=True,
-        samesite="lax",
-        secure=False,
+        samesite="none",
+        secure=True,
         max_age=86400,
     )
     return response
