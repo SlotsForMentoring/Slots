@@ -11,6 +11,7 @@ import LoginPage          from '@/pages/LoginPage'
 import HomePage           from '@/pages/HomePage'
 import AdminUsersPage     from '@/pages/AdminUsersPage'
 import AvailableSlotsPage from '@/pages/AvailableSlotsPage'
+import MySlots            from '@/pages/MySlots'
 
 const Placeholder = ({ title }) => (
   <div className="mx-auto max-w-5xl px-6 py-16">
@@ -57,7 +58,7 @@ function AppRoutes() {
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['volunteer']} />}>
-          <Route path="/my-slots" element={<Placeholder title="My Slots" />} />
+          <Route path="/my-slots" element={<MySlots />} />
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
