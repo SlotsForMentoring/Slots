@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.models.booking import Booking
 from app.models.slots import Slot
@@ -28,5 +29,13 @@ async def create_booking(session: AsyncSession, slot_id, trainee_id, agenda):
 
     session.add(booking)
     await session.commit()
-    await session.refresh(booking)
-    return booking
+
+    result = await session.execute(
+        select(Booking)
+        .where(Booking.id == booking.id)
+        .options(
+            selectinload(Booking.slot).selectinload(Slot.volunteer),
+            selectinload(Booking.trainee),
+        )
+    )
+    return result.scalar_one()
