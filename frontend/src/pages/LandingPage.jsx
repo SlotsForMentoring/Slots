@@ -58,58 +58,61 @@ export default function LandingPage() {
           <div className="relative left-1/2 w-[36rem] sm:w-[72rem] -translate-x-1/2 rotate-[30deg] aspect-[1155/678] bg-gradient-to-tr from-brand-400 to-brand-200 opacity-20" />
         </div>
 
-        <div className="mx-auto max-w-4xl px-6 py-24 sm:py-36 text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-1.5 text-sm text-brand-700">
-            <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
+        <div className="mx-auto max-w-4xl px-5 py-16 sm:px-6 sm:py-28 lg:py-36 text-center">
+          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs sm:text-sm text-brand-700">
+            <span className="h-1.5 w-1.5 rounded-full bg-brand-500 shrink-0" />
             1-on-1 mentoring — free, no sign-up fees
           </div>
 
-          <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
             Schedule smarter.{' '}
             <span className="bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent">
               Meet easier.
             </span>
           </h1>
 
-          <p className="mt-6 text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-4 sm:mt-6 text-base sm:text-lg lg:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
             AgenGate is a pair scheduling platform — connect with the right person at the right time.
             Whether it's a mentor, a peer, or a volunteer expert, book a 1-on-1 session in one click.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" onClick={getStarted}>
+          <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+            <Button size="lg" fullWidth={false} className="w-full sm:w-auto" onClick={getStarted}>
               {user ? 'Go to dashboard →' : "Get started — it's free"}
             </Button>
             <Button
               variant="ghost"
               size="lg"
+              className="w-full sm:w-auto"
               onClick={() => document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' })}
             >
               See how it works ↓
             </Button>
           </div>
 
-          <p className="mt-8 text-sm text-gray-400">
+          <p className="mt-6 text-xs sm:text-sm text-gray-400">
             No credit card required · Powered by volunteer mentors
           </p>
         </div>
       </section>
 
-      <section className="border-t border-gray-100 bg-gray-50 py-20">
-        <div className="mx-auto max-w-5xl px-6">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900">
+      <section className="border-t border-gray-100 bg-gray-50 py-14 sm:py-20">
+        <div className="mx-auto max-w-5xl px-5 sm:px-6">
+          <h2 className="text-center text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
             Everything you need to learn faster
           </h2>
-          <p className="mt-3 text-center text-gray-500">Simple, focused, and built around your growth.</p>
+          <p className="mt-3 text-center text-sm sm:text-base text-gray-500">
+            Simple, focused, and built around your growth.
+          </p>
 
-          <div className="mt-12 grid gap-6 sm:grid-cols-3">
+          <div className="mt-10 sm:mt-12 grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-3">
             {FEATURES.map(({ icon, title, description }) => (
               <div
                 key={title}
-                className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md hover:border-brand-200 transition-all duration-200"
+                className="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 shadow-sm hover:shadow-md hover:border-brand-200 transition-all duration-200"
               >
-                <div className="mb-4 inline-flex rounded-xl bg-brand-50 p-3 text-brand-600">{icon}</div>
-                <h3 className="text-base font-semibold text-gray-900">{title}</h3>
+                <div className="mb-3 sm:mb-4 inline-flex rounded-xl bg-brand-50 p-3 text-brand-600">{icon}</div>
+                <h3 className="text-sm sm:text-base font-semibold text-gray-900">{title}</h3>
                 <p className="mt-2 text-sm text-gray-500 leading-relaxed">{description}</p>
               </div>
             ))}
@@ -117,34 +120,44 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section id="how-it-works" className="py-20">
-        <div className="mx-auto max-w-4xl px-6">
-          <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900">How it works</h2>
-          <p className="mt-3 text-center text-gray-500">Three steps to your first session.</p>
+      <section id="how-it-works" className="py-14 sm:py-20">
+        <div className="mx-auto max-w-4xl px-5 sm:px-6">
+          <h2 className="text-center text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+            How it works
+          </h2>
+          <p className="mt-3 text-center text-sm sm:text-base text-gray-500">
+            Three steps to your first session.
+          </p>
 
-          <div className="mt-12 grid gap-8 sm:grid-cols-3">
+          <div className="mt-10 sm:mt-12 grid gap-8 grid-cols-1 sm:grid-cols-3">
             {STEPS.map(({ step, title, description }) => (
-              <div key={step} className="flex flex-col items-center text-center">
-                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-500/25">
+              <div key={step} className="flex sm:flex-col items-start sm:items-center gap-4 sm:gap-0 sm:text-center">
+                <div className="shrink-0 flex h-11 w-11 sm:h-12 sm:w-12 sm:mb-4 items-center justify-center rounded-full bg-brand-500 text-white font-bold text-sm shadow-lg shadow-brand-500/25">
                   {step}
                 </div>
-                <h3 className="text-base font-semibold text-gray-900">{title}</h3>
-                <p className="mt-2 text-sm text-gray-500 leading-relaxed">{description}</p>
+                <div>
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900">{title}</h3>
+                  <p className="mt-1 sm:mt-2 text-sm text-gray-500 leading-relaxed">{description}</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="border-t border-gray-100 bg-gradient-to-r from-brand-600 to-brand-800 py-16">
-        <div className="mx-auto max-w-2xl px-6 text-center">
-          <Logo size="md" className="justify-center mb-6 [&_span:last-child]:text-white" />
-          <h2 className="text-3xl font-bold tracking-tight text-white">Ready to find your mentor?</h2>
-          <p className="mt-3 text-brand-200">Join trainees already learning with AgenGate.</p>
+      <section className="border-t border-gray-100 bg-gradient-to-r from-brand-600 to-brand-800 py-14 sm:py-16">
+        <div className="mx-auto max-w-2xl px-5 sm:px-6 text-center">
+          <Logo size="md" className="justify-center mb-5 sm:mb-6 [&_span:last-child]:text-white" />
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+            Ready to find your mentor?
+          </h2>
+          <p className="mt-3 text-sm sm:text-base text-brand-200">
+            Join trainees already learning with AgenGate.
+          </p>
           <Button
             variant="secondary"
             size="lg"
-            className="mt-8 border-white/40 text-white hover:bg-white hover:text-brand-600"
+            className="mt-7 sm:mt-8 w-full sm:w-auto border-white/40 text-white hover:bg-white hover:text-brand-600"
             onClick={getStarted}
           >
             {user ? 'Go to dashboard' : 'Sign in with Google'}
@@ -152,10 +165,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-gray-100 py-8">
-        <div className="mx-auto max-w-5xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <footer className="border-t border-gray-100 py-6 sm:py-8">
+        <div className="mx-auto max-w-5xl px-5 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <Logo size="sm" />
-          <p className="text-sm text-gray-400">
+          <p className="text-xs sm:text-sm text-gray-400 text-center sm:text-left">
             © {new Date().getFullYear()} AgenGate. Built for learners, by volunteers.
           </p>
         </div>

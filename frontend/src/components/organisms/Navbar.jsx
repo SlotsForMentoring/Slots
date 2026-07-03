@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { api } from '@/services/api'
@@ -27,10 +28,19 @@ const linkClass = ({ isActive }) =>
       : 'text-gray-600 hover:text-gray-900 border-transparent',
   )
 
+const mobileLinkClass = ({ isActive }) =>
+  cn(
+    'block px-3 py-2.5 text-sm font-medium rounded-lg transition-colors duration-150',
+    isActive
+      ? 'text-brand-600 bg-brand-50'
+      : 'text-gray-700 hover:bg-gray-50',
+  )
+
 export default function Navbar() {
-  const user    = useAuthStore((s) => s.user)
+  const user      = useAuthStore((s) => s.user)
   const clearUser = useAuthStore((s) => s.clearUser)
   const navigate  = useNavigate()
+  const [open, setOpen] = useState(false)
 
   const links = user ? (NAV_LINKS[user.role] ?? []) : []
 
@@ -58,10 +68,10 @@ export default function Navbar() {
           </ul>
         )}
 
-        <div className="flex items-center gap-3">
+        <div className="hidden sm:flex items-center gap-3">
           {user ? (
             <>
-              <div className="hidden sm:flex items-center gap-2">
+              <div className="flex items-center gap-2">
                 <span className="text-sm text-gray-500">{user.name}</span>
                 <RoleBadge role={user.role} />
               </div>
@@ -76,7 +86,54 @@ export default function Navbar() {
           )}
         </div>
 
+        <button
+          className="sm:hidden flex items-center justify-center w-9 h-9 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+          onClick={() => setOpen((o) => !o)}
+          aria-label={open ? 'Close menu' : 'Open menu'}
+        >
+          {open ? (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          )}
+        </button>
+
       </nav>
+
+      {open && (
+        <div className="sm:hidden border-t border-gray-100 bg-white px-4 pb-4">
+          {user && (
+            <div className="flex items-center gap-2 py-3 mb-1 border-b border-gray-100">
+              <span className="text-sm text-gray-500">{user.name}</span>
+              <RoleBadge role={user.role} />
+            </div>
+          )}
+          {links.length > 0 && (
+            <ul className="list-none m-0 p-0 mt-1 mb-2">
+              {links.map(({ label, to }) => (
+                <li key={to}>
+                  <NavLink to={to} className={mobileLinkClass} onClick={() => setOpen(false)}>
+                    {label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          )}
+          {user ? (
+            <Button variant="ghost" size="sm" fullWidth onClick={handleLogout}>
+              Logout
+            </Button>
+          ) : (
+            <Button size="sm" fullWidth onClick={() => { navigate('/login'); setOpen(false) }}>
+              Sign in
+            </Button>
+          )}
+        </div>
+      )}
     </header>
   )
 }
