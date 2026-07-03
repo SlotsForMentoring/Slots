@@ -72,8 +72,8 @@ export default function LandingPage() {
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
-            AgenGate connects trainees with volunteer mentors for focused 1-on-1 sessions.
-            Browse open slots, book in one click, and get the guidance you need.
+            AgenGate is a pair scheduling platform — connect with the right person at the right time.
+            Whether it's a mentor, a peer, or a volunteer expert, book a 1-on-1 session in one click.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
