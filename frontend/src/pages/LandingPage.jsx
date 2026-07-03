@@ -53,21 +53,17 @@ export default function LandingPage() {
   return (
     <div className="font-sans">
 
-      {/* ── Hero ── */}
       <section className="relative overflow-hidden">
-        {/* Background gradient blob */}
         <div aria-hidden="true" className="absolute inset-x-0 -top-40 -z-10 overflow-hidden blur-3xl">
           <div className="relative left-1/2 w-[36rem] sm:w-[72rem] -translate-x-1/2 rotate-[30deg] aspect-[1155/678] bg-gradient-to-tr from-brand-400 to-brand-200 opacity-20" />
         </div>
 
         <div className="mx-auto max-w-4xl px-6 py-24 sm:py-36 text-center">
-          {/* Eyebrow */}
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-1.5 text-sm text-brand-700">
             <span className="h-1.5 w-1.5 rounded-full bg-brand-500" />
             1-on-1 mentoring — free, no sign-up fees
           </div>
 
-          {/* Headline */}
           <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
             Schedule smarter.{' '}
             <span className="bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent">
@@ -80,7 +76,6 @@ export default function LandingPage() {
             Browse open slots, book in one click, and get the guidance you need.
           </p>
 
-          {/* CTAs */}
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button size="lg" onClick={getStarted}>
               {user ? 'Go to dashboard →' : "Get started — it's free"}
@@ -100,7 +95,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Features ── */}
       <section className="border-t border-gray-100 bg-gray-50 py-20">
         <div className="mx-auto max-w-5xl px-6">
           <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900">
@@ -123,7 +117,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── How it works ── */}
       <section id="how-it-works" className="py-20">
         <div className="mx-auto max-w-4xl px-6">
           <h2 className="text-center text-3xl font-bold tracking-tight text-gray-900">How it works</h2>
@@ -143,7 +136,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Bottom CTA ── */}
       <section className="border-t border-gray-100 bg-gradient-to-r from-brand-600 to-brand-800 py-16">
         <div className="mx-auto max-w-2xl px-6 text-center">
           <Logo size="md" className="justify-center mb-6 [&_span:last-child]:text-white" />
@@ -160,7 +152,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Footer ── */}
       <footer className="border-t border-gray-100 py-8">
         <div className="mx-auto max-w-5xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <Logo size="sm" />
