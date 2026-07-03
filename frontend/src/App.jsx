@@ -1,26 +1,26 @@
-import { useEffect, useState } from "react"
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
-import { useAuthStore } from "./stores/authStore"
-import { api } from "./services/api"
-import LoginPage from "./pages/LoginPage"
-import HomePage from "./pages/HomePage"
-import AdminUsersPage from "./pages/AdminUsersPage"
+import { useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useAuthStore } from './stores/authStore'
+import { api } from './services/api'
 
-function ProtectedRoute({ children, role }) {
-  const user = useAuthStore((state) => state.user)
-  if (!user) return <Navigate to="/login" replace />
-  if (role && user.role !== role) return <Navigate to="/" replace />
-  return children
-}
+import RootLayout     from '@/components/layouts/RootLayout'
+import ProtectedRoute from '@/components/guards/ProtectedRoute'
 
-function getHomeRoute(role) {
-  if (role === "admin") return "/admin/users"
-  return "/"
-}
+import LandingPage    from '@/pages/LandingPage'
+import LoginPage      from '@/pages/LoginPage'
+import HomePage       from '@/pages/HomePage'
+import AdminUsersPage from '@/pages/AdminUsersPage'
+
+const Placeholder = ({ title }) => (
+  <div className="mx-auto max-w-5xl px-6 py-16">
+    <h1 className="text-3xl font-bold tracking-tight text-gray-900">{title}</h1>
+    <p className="mt-2 text-gray-500">Coming in a future sprint.</p>
+  </div>
+)
 
 function AppRoutes() {
-  const user = useAuthStore((state) => state.user)
-  const setUser = useAuthStore((state) => state.setUser)
+  const setUser   = useAuthStore((s) => s.setUser)
+  const user      = useAuthStore((s) => s.user)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -32,21 +32,40 @@ function AppRoutes() {
 
   if (loading) {
     return (
-      <div className="p-8 max-w-3xl mx-auto">
-        <p className="text-sm text-gray-500">Loading...</p>
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
   return (
     <Routes>
-      <Route path="/login" element={user ? <Navigate to={getHomeRoute(user.role)} replace /> : <LoginPage />} />
-      <Route path="/" element={
-        <ProtectedRoute>
-          {user?.role === "admin" ? <Navigate to="/admin/users" replace /> : <HomePage />}
-        </ProtectedRoute>
-      } />
-      <Route path="/admin/users" element={<ProtectedRoute role="admin"><AdminUsersPage /></ProtectedRoute>} />
+      <Route element={<RootLayout />}>
+
+        <Route path="/"      element={<LandingPage />} />
+        <Route path="/login" element={
+          user
+            ? <Navigate to={user.role === 'admin' ? '/admin/users' : '/'} replace />
+            : <LoginPage />
+        } />
+
+        <Route element={<ProtectedRoute allowedRoles={['trainee']} />}>
+          <Route path="/slots"    element={<Placeholder title="Available Slots" />} />
+          <Route path="/bookings" element={<Placeholder title="My Bookings" />} />
+          <Route path="/home"     element={<HomePage />} />
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['volunteer']} />}>
+          <Route path="/my-slots" element={<Placeholder title="My Slots" />} />
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+          <Route path="/admin/users" element={<AdminUsersPage />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+
+      </Route>
     </Routes>
   )
 }
