@@ -1,9 +1,5 @@
 import { cn } from '@/lib/cn'
 
-/**
- * RoleBadge — coloured pill for user role.
- * Usage: <RoleBadge role="trainee" />
- */
 const roleStyles = {
   trainee:   'bg-blue-50   text-blue-700  ring-blue-600/20',
   volunteer: 'bg-green-50  text-green-700 ring-green-600/20',
@@ -24,10 +20,6 @@ export function RoleBadge({ role, className }) {
   )
 }
 
-/**
- * StatusBadge — slot availability status.
- * Usage: <StatusBadge status="available" />
- */
 const statusStyles = {
   available: 'bg-green-50  text-green-700 ring-green-600/20',
   booked:    'bg-yellow-50 text-yellow-700 ring-yellow-600/20',

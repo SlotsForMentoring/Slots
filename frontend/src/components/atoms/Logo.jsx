@@ -1,17 +1,5 @@
 import { cn } from '@/lib/cn'
 
-/**
- * Logo — Mentoria wordmark with gradient icon mark.
- *
- * Props:
- *   size     'sm' | 'md' | 'lg'   default: 'md'
- *   iconOnly boolean               shows only the square icon
- *
- * Usage:
- *   <Logo />
- *   <Logo size="sm" />
- *   <Logo iconOnly />
- */
 export default function Logo({ size = 'md', iconOnly = false, className }) {
   const s = {
     sm: { icon: 'w-6 h-6 rounded-lg text-sm',  text: 'text-base' },
