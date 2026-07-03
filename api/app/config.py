@@ -12,6 +12,7 @@ class Settings(BaseSettings):
     google_redirect_uri: str
     app_jwt_secret: str
     frontend_url: str = "http://localhost:5173"
+    admin_email: str = ""
 
     @computed_field
     @property
