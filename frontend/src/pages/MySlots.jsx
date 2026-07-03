@@ -93,8 +93,28 @@ function SlotForm({ onCreated }) {
   )
 }
 
-function SlotCard({ slot }) {
+function SlotCard({ slot, onDelete }) {
   const isBooked = slot.is_booked
+  const [confirm, setConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState(null)
+
+  const handleDelete = async () => {
+    setDeleting(true)
+    setDeleteError(null)
+    try {
+      await api.deleteSlot(slot.id)
+      onDelete(slot.id)
+    } catch (e) {
+      const msg = e?.message || ''
+      if (msg.includes('409')) setDeleteError('Slot is already booked and cannot be deleted.')
+      else if (msg.includes('403')) setDeleteError('You can only delete your own slots.')
+      else setDeleteError('Could not delete slot. Please try again.')
+      setConfirm(false)
+    } finally {
+      setDeleting(false)
+    }
+  }
 
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm flex flex-col gap-4">
@@ -126,6 +146,31 @@ function SlotCard({ slot }) {
           )}
         </div>
       )}
+
+      {!isBooked && (
+        <div className="mt-auto">
+          {!confirm ? (
+            <Button variant="danger" size="sm" fullWidth onClick={() => setConfirm(true)}>
+              Delete slot
+            </Button>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <p className="text-xs text-gray-500 text-center">Are you sure?</p>
+              <div className="flex gap-2">
+                <Button variant="secondary" size="sm" fullWidth onClick={() => setConfirm(false)} disabled={deleting}>
+                  Cancel
+                </Button>
+                <Button variant="danger" size="sm" fullWidth loading={deleting} onClick={handleDelete}>
+                  Confirm
+                </Button>
+              </div>
+            </div>
+          )}
+          {deleteError && (
+            <p className="mt-2 text-xs text-danger-600 font-medium">{deleteError}</p>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -144,6 +189,10 @@ export default function MySlots() {
 
   const handleCreated = (newSlot) => {
     setSlots((prev) => [newSlot, ...prev])
+  }
+
+  const handleDeleted = (id) => {
+    setSlots((prev) => prev.filter((s) => s.id !== id))
   }
 
   return (
@@ -185,7 +234,7 @@ export default function MySlots() {
       {!loading && slots.length > 0 && (
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {slots.map((slot) => (
-            <SlotCard key={slot.id} slot={slot} />
+            <SlotCard key={slot.id} slot={slot} onDelete={handleDeleted} />
           ))}
         </div>
       )}
