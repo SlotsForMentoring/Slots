@@ -14,25 +14,34 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Pair Scheduling</h1>
-          <button
-            onClick={handleLogout}
-            className="text-gray-600 hover:text-gray-900 cursor-pointer"
-          >
-            Logout
-          </button>
-        </div>
-        {user && (
-          <div className="bg-white rounded-lg shadow p-6">
-            <p className="text-gray-900 font-medium">{user.name}</p>
-            <p className="text-gray-600">{user.email}</p>
-            <p className="text-sm text-gray-500 mt-2">Role: {user.role}</p>
-          </div>
-        )}
+    <div className="p-8 max-w-3xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-xl font-bold">Pair Scheduling</h1>
+        <button
+          onClick={handleLogout}
+          className="text-sm text-gray-500 hover:text-gray-900 cursor-pointer"
+        >
+          Logout
+        </button>
       </div>
+      {user && (
+        <table className="w-full text-left text-sm">
+          <tbody>
+            <tr className="border-b">
+              <td className="py-2 text-gray-500">Name</td>
+              <td className="py-2">{user.name}</td>
+            </tr>
+            <tr className="border-b">
+              <td className="py-2 text-gray-500">Email</td>
+              <td className="py-2">{user.email}</td>
+            </tr>
+            <tr className="border-b">
+              <td className="py-2 text-gray-500">Role</td>
+              <td className="py-2">{user.role}</td>
+            </tr>
+          </tbody>
+        </table>
+      )}
     </div>
   )
 }
