@@ -17,11 +17,11 @@ export default function Logo({ size = 'md', iconOnly = false, className }) {
           'bg-gradient-to-br from-brand-500 to-brand-700',
         )}
       >
-        <span className="text-white font-bold select-none">M</span>
+        <span className="text-white font-bold select-none">A</span>
       </div>
       {!iconOnly && (
         <span className={cn('font-semibold tracking-tight text-gray-900', s.text)}>
-          Mentoria
+          AgenGate
         </span>
       )}
     </div>

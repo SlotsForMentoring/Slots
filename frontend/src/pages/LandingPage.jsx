@@ -69,14 +69,14 @@ export default function LandingPage() {
 
           {/* Headline */}
           <h1 className="text-5xl sm:text-6xl font-bold tracking-tight text-gray-900 leading-tight">
-            Connect with a mentor.{' '}
+            Schedule smarter.{' '}
             <span className="bg-gradient-to-r from-brand-500 to-brand-700 bg-clip-text text-transparent">
-              Grow faster.
+              Meet easier.
             </span>
           </h1>
 
           <p className="mt-6 text-lg sm:text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed">
-            Mentoria connects trainees with volunteer mentors for focused 1-on-1 sessions.
+            AgenGate connects trainees with volunteer mentors for focused 1-on-1 sessions.
             Browse open slots, book in one click, and get the guidance you need.
           </p>
 
@@ -148,7 +148,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-2xl px-6 text-center">
           <Logo size="md" className="justify-center mb-6 [&_span:last-child]:text-white" />
           <h2 className="text-3xl font-bold tracking-tight text-white">Ready to find your mentor?</h2>
-          <p className="mt-3 text-brand-200">Join trainees already learning with Mentoria.</p>
+          <p className="mt-3 text-brand-200">Join trainees already learning with AgenGate.</p>
           <Button
             variant="secondary"
             size="lg"
@@ -165,7 +165,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-5xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <Logo size="sm" />
           <p className="text-sm text-gray-400">
-            © {new Date().getFullYear()} Mentoria. Built for learners, by volunteers.
+            © {new Date().getFullYear()} AgenGate. Built for learners, by volunteers.
           </p>
         </div>
       </footer>
