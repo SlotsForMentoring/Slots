@@ -40,6 +40,9 @@ class Booking(Base):
         default=lambda: datetime.now(timezone.utc),
     )
 
-    # Relationships
-    slot: Mapped["Slot"] = relationship("Slot", back_populates="booking")
-    trainee: Mapped["User"] = relationship("User")
+    slot: Mapped["Slot"] = relationship("Slot", back_populates="booking", lazy="selectin")
+    trainee: Mapped["User"] = relationship("User", lazy="selectin")
+
+    @property
+    def trainee_name(self) -> str:
+        return self.trainee.name if self.trainee else ""
