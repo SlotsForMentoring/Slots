@@ -4,10 +4,12 @@ import { useAuthStore } from "./stores/authStore"
 import { api } from "./services/api"
 import LoginPage from "./pages/LoginPage"
 import HomePage from "./pages/HomePage"
+import AdminUsersPage from "./pages/AdminUsersPage"
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children, role }) {
   const user = useAuthStore((state) => state.user)
   if (!user) return <Navigate to="/login" replace />
+  if (role && user.role !== role) return <Navigate to="/" replace />
   return children
 }
 
@@ -35,6 +37,7 @@ function AppRoutes() {
     <Routes>
       <Route path="/login" element={user ? <Navigate to="/" replace /> : <LoginPage />} />
       <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+      <Route path="/admin/users" element={<ProtectedRoute role="admin"><AdminUsersPage /></ProtectedRoute>} />
     </Routes>
   )
 }

@@ -1,6 +1,6 @@
 import { useAuthStore } from "../stores/authStore"
 import { api } from "../services/api"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 
 export default function HomePage() {
   const user = useAuthStore((state) => state.user)
@@ -30,6 +30,11 @@ export default function HomePage() {
             <p className="text-gray-900 font-medium">{user.name}</p>
             <p className="text-gray-600">{user.email}</p>
             <p className="text-sm text-gray-500 mt-2">Role: {user.role}</p>
+            {user.role === "admin" && (
+              <Link to="/admin/users" className="text-blue-600 hover:underline text-sm mt-4 inline-block">
+                Manage users
+              </Link>
+            )}
           </div>
         )}
       </div>
