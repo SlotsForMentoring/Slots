@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { useAuthStore } from "../stores/authStore"
 import { api } from "../services/api"
 
 const ROLES = ["trainee", "volunteer", "admin"]
@@ -6,6 +8,14 @@ const ROLES = ["trainee", "volunteer", "admin"]
 export default function AdminUsersPage() {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
+  const clearUser = useAuthStore((state) => state.clearUser)
+  const navigate = useNavigate()
+
+  const handleLogout = async () => {
+    await api.logout()
+    clearUser()
+    navigate("/login")
+  }
 
   useEffect(() => {
     api.getUsers()
@@ -27,7 +37,15 @@ export default function AdminUsersPage() {
 
   return (
     <div className="p-8 max-w-3xl mx-auto">
-      <h1 className="text-xl font-bold mb-6">Users</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-xl font-bold">Users</h1>
+        <button
+          onClick={handleLogout}
+          className="text-sm text-gray-500 hover:text-gray-900 cursor-pointer"
+        >
+          Logout
+        </button>
+      </div>
       <table className="w-full text-left text-sm">
         <thead>
           <tr className="border-b">

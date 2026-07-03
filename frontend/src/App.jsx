@@ -13,6 +13,11 @@ function ProtectedRoute({ children, role }) {
   return children
 }
 
+function getHomeRoute(role) {
+  if (role === "admin") return "/admin/users"
+  return "/"
+}
+
 function AppRoutes() {
   const user = useAuthStore((state) => state.user)
   const setUser = useAuthStore((state) => state.setUser)
@@ -27,15 +32,15 @@ function AppRoutes() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <p className="text-gray-500">Loading...</p>
+      <div className="p-8 max-w-3xl mx-auto">
+        <p className="text-sm text-gray-500">Loading...</p>
       </div>
     )
   }
 
   return (
     <Routes>
-      <Route path="/login" element={user ? <Navigate to="/" replace /> : <LoginPage />} />
+      <Route path="/login" element={user ? <Navigate to={getHomeRoute(user.role)} replace /> : <LoginPage />} />
       <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
       <Route path="/admin/users" element={<ProtectedRoute role="admin"><AdminUsersPage /></ProtectedRoute>} />
     </Routes>
