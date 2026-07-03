@@ -3,17 +3,14 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from './stores/authStore'
 import { api } from './services/api'
 
-// Layout + guards
 import RootLayout     from '@/components/layouts/RootLayout'
 import ProtectedRoute from '@/components/guards/ProtectedRoute'
 
-// Pages
 import LandingPage    from '@/pages/LandingPage'
 import LoginPage      from '@/pages/LoginPage'
 import HomePage       from '@/pages/HomePage'
 import AdminUsersPage from '@/pages/AdminUsersPage'
 
-// Placeholder — replace when epics are implemented
 const Placeholder = ({ title }) => (
   <div className="mx-auto max-w-5xl px-6 py-16">
     <h1 className="text-3xl font-bold tracking-tight text-gray-900">{title}</h1>
@@ -21,14 +18,6 @@ const Placeholder = ({ title }) => (
   </div>
 )
 
-/**
- * AppRoutes — hydrates auth state from cookie on load, then renders routes.
- *
- * Cookie auth flow:
- *   1. On mount → GET /auth/me (backend reads cookie, returns user)
- *   2. User stored in Zustand → Navbar + ProtectedRoute react immediately
- *   3. On logout → POST /auth/logout clears cookie + Zustand
- */
 function AppRoutes() {
   const setUser   = useAuthStore((s) => s.setUser)
   const user      = useAuthStore((s) => s.user)
@@ -53,7 +42,6 @@ function AppRoutes() {
     <Routes>
       <Route element={<RootLayout />}>
 
-        {/* ── Public ── */}
         <Route path="/"      element={<LandingPage />} />
         <Route path="/login" element={
           user
@@ -61,24 +49,20 @@ function AppRoutes() {
             : <LoginPage />
         } />
 
-        {/* ── Trainee ── */}
         <Route element={<ProtectedRoute allowedRoles={['trainee']} />}>
           <Route path="/slots"    element={<Placeholder title="Available Slots" />} />
           <Route path="/bookings" element={<Placeholder title="My Bookings" />} />
           <Route path="/home"     element={<HomePage />} />
         </Route>
 
-        {/* ── Volunteer ── */}
         <Route element={<ProtectedRoute allowedRoles={['volunteer']} />}>
           <Route path="/my-slots" element={<Placeholder title="My Slots" />} />
         </Route>
 
-        {/* ── Admin ── */}
         <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
           <Route path="/admin/users" element={<AdminUsersPage />} />
         </Route>
 
-        {/* ── Catch-all ── */}
         <Route path="*" element={<Navigate to="/" replace />} />
 
       </Route>

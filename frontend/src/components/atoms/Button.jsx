@@ -1,23 +1,5 @@
 import { cn } from '@/lib/cn'
 
-/**
- * Button — Atom
- *
- * Props:
- *   variant   'primary' | 'secondary' | 'danger' | 'ghost'   default: 'primary'
- *   size      'sm' | 'md' | 'lg'                             default: 'md'
- *   loading   boolean — spinner + blocked clicks
- *   fullWidth boolean
- *   disabled  boolean
- *   type      'button' | 'submit' | 'reset'
- *   className extra classes for one-off overrides
- *
- * Usage:
- *   <Button>Save</Button>
- *   <Button variant="secondary" size="sm">Cancel</Button>
- *   <Button variant="danger" loading>Deleting…</Button>
- */
-
 const variants = {
   primary:
     'bg-brand-500 text-white hover:bg-brand-600 focus-visible:ring-brand-500 shadow-sm',

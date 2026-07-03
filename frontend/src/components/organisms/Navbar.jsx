@@ -6,10 +6,6 @@ import Button from '@/components/atoms/Button'
 import { RoleBadge } from '@/components/atoms/Badge'
 import { cn } from '@/lib/cn'
 
-/**
- * Role → nav links mapping.
- * Unauthenticated users see only the Sign in button (no links).
- */
 const NAV_LINKS = {
   trainee:   [
     { label: 'Browse Slots', to: '/slots' },
@@ -31,13 +27,6 @@ const linkClass = ({ isActive }) =>
       : 'text-gray-600 hover:text-gray-900 border-transparent',
   )
 
-/**
- * Navbar — Organism  (ticket 5.2)
- *
- * Reads user from Zustand.
- * Shows different links per role.
- * Logout calls POST /auth/logout then clears store.
- */
 export default function Navbar() {
   const user    = useAuthStore((s) => s.user)
   const clearUser = useAuthStore((s) => s.clearUser)
@@ -55,12 +44,10 @@ export default function Navbar() {
     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur-md">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
 
-        {/* Logo */}
         <NavLink to="/" aria-label="Mentoria home">
           <Logo size="sm" />
         </NavLink>
 
-        {/* Centre links */}
         {links.length > 0 && (
           <ul className="hidden sm:flex items-center gap-6 list-none m-0 p-0">
             {links.map(({ label, to }) => (
@@ -71,7 +58,6 @@ export default function Navbar() {
           </ul>
         )}
 
-        {/* Right — auth */}
         <div className="flex items-center gap-3">
           {user ? (
             <>
