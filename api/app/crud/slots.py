@@ -95,7 +95,8 @@ async def get_available_slots(
     )
     result = await session.execute(
         select(Slot).where(
-            Slot.start_time > func.now() + notice_interval
+            Slot.start_time > func.now() + notice_interval,
+            ~Slot.id.in_(select(Booking.slot_id)),
         )
     )
     return list(result.scalars().all())

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 
 from app.database import get_db
 from app.dependencies.auth import get_current_user, require_role
@@ -31,15 +32,29 @@ async def create_booking(
 async def my_bookings(
     user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_db),
+    status: str | None = None,
 ):
+    opts = [
+        selectinload(Booking.slot).selectinload(Slot.volunteer),
+        selectinload(Booking.trainee),
+    ]
+
     if user.role == "trainee":
-        query = select(Booking).where(Booking.trainee_id == user.id)
+        query = (
+            select(Booking)
+            .where(Booking.trainee_id == user.id)
+            .options(*opts)
+        )
     else:
         query = (
             select(Booking)
             .join(Slot, Booking.slot_id == Slot.id)
             .where(Slot.volunteer_id == user.id)
+            .options(*opts)
         )
+
+    if status:
+        query = query.where(Booking.status == status)
 
     result = await session.execute(query)
     return result.scalars().all()
