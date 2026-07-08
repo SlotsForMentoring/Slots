@@ -13,6 +13,8 @@ class Settings(BaseSettings):
     app_jwt_secret: str
     frontend_url: str = "http://localhost:5173"
     admin_email: str = ""
+    cookie_secure: bool = True
+    cookie_samesite: str = "none"
 
     @computed_field
     @property
