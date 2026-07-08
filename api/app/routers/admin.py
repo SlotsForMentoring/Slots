@@ -26,8 +26,14 @@ async def update_user_role(
     user_id: UUID,
     body: RoleUpdate,
     session: AsyncSession = Depends(get_db),
-    _current_user: User = Depends(require_role("admin")),
+    current_user: User = Depends(require_role("admin")),
 ):
+    if user_id == current_user.id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot cange your own role"
+        )
+    
     user = await crud.update_user_role(
         session=session, user_id=user_id, role=body.role
     )
