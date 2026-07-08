@@ -1,6 +1,6 @@
 # API Contract: Admin
 
-All admin endpoints require `Authorization: Bearer <token>` with `role: admin`.
+All admin endpoints require authentication via httpOnly cookie (`session_token`). User must have `role: admin`.
 
 ---
 
@@ -24,7 +24,7 @@ List all users in the system.
 ]
 ```
 
-**Response 403:** `{ "detail": "Admin access required" }`
+**Response 403:** `{ "detail": "Insufficient permissions" }`
 
 ---
 
@@ -56,5 +56,5 @@ Valid roles: `trainee`, `volunteer`, `admin`
 ```
 
 **Response 404:** `{ "detail": "User not found" }`
-**Response 403:** `{ "detail": "Admin access required" }`
+**Response 403:** `{ "detail": "Insufficient permissions" }`
 **Response 422:** `{ "detail": "Invalid role" }`
