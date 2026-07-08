@@ -41,7 +41,7 @@ async def callback(code: str, session: AsyncSession = Depends(get_db)):
     token = create_access_token(user.id, user.email, user.role)
     response = RedirectResponse(url=settings.frontend_url, status_code=302)
     response.set_cookie(
-        key="access_token",
+        key="session_token",
         value=token,
         httponly=True,
         samesite=settings.cookie_samesite,
@@ -54,7 +54,13 @@ async def callback(code: str, session: AsyncSession = Depends(get_db)):
 @router.post("/logout")
 async def logout():
     response = Response(status_code=200)
-    response.delete_cookie(key="access_token")
+    response.delete_cookie(
+        key="session_token",
+        httponly=True,
+        samesite=settings.cookie_samesite,
+        secure=settings.cookie_secure,
+        path="/"
+    )
     return response
 
 
