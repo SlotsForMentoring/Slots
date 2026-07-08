@@ -1,5 +1,7 @@
 # API Contract: Slots
 
+Authentication: httpOnly cookie (`session_token`). All endpoints require authentication.
+
 ---
 
 ## POST /slots
@@ -31,7 +33,7 @@ Create a new time slot offering. Requires `role: volunteer`.
 }
 ```
 
-**Response 403:** `{ "detail": "Volunteer access required" }`
+**Response 403:** `{ "detail": "Insufficient permissions" }`
 **Response 422:** `{ "detail": "Slot must be exactly 1 hour" }`
 **Response 409:** `{ "detail": "Overlapping slot exists" }`
 
