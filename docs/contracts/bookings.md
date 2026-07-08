@@ -1,5 +1,7 @@
 # API Contract: Bookings
 
+Authentication: httpOnly cookie (`session_token`). All endpoints require authentication.
+
 ---
 
 ## POST /bookings
@@ -41,7 +43,7 @@ Server validates:
 **Response 409:** `{ "detail": "Slot is already booked" }`
 **Response 422:** `{ "detail": "Booking window has passed" }`
 **Response 404:** `{ "detail": "Slot not found" }`
-**Response 403:** `{ "detail": "Trainee access required" }`
+**Response 403:** `{ "detail": "Insufficient permissions" }`
 
 ---
 
