@@ -6,7 +6,6 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.config import settings
 from app.models import Base
-import app.models.placeholder  # noqa: F401
 import app.models.user  # noqa: F401
 import app.models.booking # noqa: F401
 
