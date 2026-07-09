@@ -1,14 +1,22 @@
 from datetime import datetime, timedelta, timezone
-from sqlalchemy.exc import IntegrityError
+from uuid import UUID
 from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.booking import (
-    get_slot,
     create_booking,
+    get_slot,
 )
+from app.models.booking import Booking
 
 
-async def book_slot(session, slot_id, trainee_id, agenda):
+async def book_slot(
+    session: AsyncSession,
+    slot_id: UUID,
+    trainee_id: UUID,
+    agenda: str | None,
+) -> Booking:
 
     slot = await get_slot(session, slot_id)
 
