@@ -28,6 +28,7 @@ class Booking(Base):
     )
 
     agenda: Mapped[str | None] = mapped_column(Text, nullable=True)
+    meet_link: Mapped[str | None] = mapped_column(Text, nullable=True)
 
     status: Mapped[str] = mapped_column(
         String(50),

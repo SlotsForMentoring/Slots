@@ -20,6 +20,16 @@ async def get_booking_by_slot(session: AsyncSession, slot_id: UUID) -> Booking |
     )
     return result.scalar_one_or_none()
 
+async def set_meet_link(session: AsyncSession, booking_id: UUID, meet_link: str) -> None:
+    result = await session.execute(
+        select(Booking).where(Booking.id == booking_id)
+    )
+    booking = result.scalar_one_or_none()
+    if booking is None:
+        return
+
+    booking.meet_link = meet_link
+    await session.commit()
 
 async def create_booking(
     session: AsyncSession,
