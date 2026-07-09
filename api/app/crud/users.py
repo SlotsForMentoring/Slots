@@ -64,6 +64,8 @@ async def upsert_user(
         user.email = email
         user.name = name
         user.profile_picture = profile_picture
+        if google_refresh_token is not None:
+            user.google_refresh_token = google_refresh_token
     await session.commit()
     await session.refresh(user)
     return user
