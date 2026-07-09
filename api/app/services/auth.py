@@ -17,7 +17,7 @@ def get_google_auth_url() -> str:
         "client_id": settings.google_client_id,
         "redirect_uri": settings.google_redirect_uri,
         "response_type": "code",
-        "scope": "openid email profile",
+        "scope": "openid email profile https://www.googleapis.com/auth/calendar.events",
         "access_type": "offline",
         "prompt": "consent",
     }
@@ -44,7 +44,10 @@ async def exchange_code_for_userinfo(code: str) -> dict:
             headers={"Authorization": f"Bearer {tokens['access_token']}"},
         )
         userinfo_response.raise_for_status()
-        return userinfo_response.json()
+        return {
+            "userinfo": userinfo_response.json(),
+            "refresh_token": tokens["refresh_token"]
+        }
 
 
 def create_access_token(user_id: uuid.UUID, email: str, role: str) -> str:
