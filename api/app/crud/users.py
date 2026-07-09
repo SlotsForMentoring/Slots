@@ -46,6 +46,7 @@ async def upsert_user(
     email: str,
     name: str,
     profile_picture: str | None,
+    google_refresh_token: str | None = None
 ) -> User:
     user = await get_user_by_google_id(session, google_id)
     if user is None:
@@ -56,6 +57,7 @@ async def upsert_user(
             name=name,
             profile_picture=profile_picture,
             role=role,
+            google_refresh_token=google_refresh_token
         )
         session.add(user)
     else:
