@@ -46,3 +46,7 @@ class Booking(Base):
     @property
     def trainee_name(self) -> str:
         return self.trainee.name if self.trainee else ""
+
+    @property
+    def trainee_email(self) -> str:
+        return self.trainee.email if self.trainee else ""

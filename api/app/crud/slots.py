@@ -4,6 +4,7 @@ from uuid import UUID
 from sqlalchemy import select, and_, func, cast
 from sqlalchemy.dialects.postgresql import INTERVAL
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.models.booking import Booking
 from app.models.slots import Slot
@@ -51,7 +52,11 @@ async def get_slots_by_volunteer(
     volunteer_id: UUID,
     include_past: bool = False,
 ) -> list[Slot]:
-    query = select(Slot).where(Slot.volunteer_id == volunteer_id)
+    query = (
+        select(Slot)
+        .where(Slot.volunteer_id == volunteer_id)
+        .options(selectinload(Slot.booking).selectinload(Booking.trainee))
+    )
     if not include_past:
         query = query.where(Slot.start_time > datetime.now(timezone.utc))
     result = await session.execute(query)
