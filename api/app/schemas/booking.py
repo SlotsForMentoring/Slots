@@ -14,6 +14,8 @@ class SlotInfo(BaseModel):
     start_time: datetime
     end_time: datetime
 
+    model_config = {"from_attributes": True}
+
 
 class BookingResponse(BaseModel):
     id: uuid.UUID
@@ -22,3 +24,5 @@ class BookingResponse(BaseModel):
     agenda: str | None
     status: str
     created_at: datetime
+
+    model_config = {"from_attributes": True}
