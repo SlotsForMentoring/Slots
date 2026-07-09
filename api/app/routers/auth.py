@@ -26,16 +26,18 @@ async def login():
 @router.get("/callback")
 async def callback(code: str, session: AsyncSession = Depends(get_db)):
     try:
-        userinfo = await exchange_code_for_userinfo(code)
+        auth_result = await exchange_code_for_userinfo(code)
     except HTTPStatusError:
         raise HTTPException(status_code=502, detail="Failed to authenticate with Google")
 
+    userinfo = auth_result["userinfo"]
     user = await upsert_user(
         session=session,
         google_id=userinfo["id"],
         email=userinfo["email"],
         name=userinfo["name"],
         profile_picture=userinfo.get("picture"),
+        google_refresh_token=auth_result["refresh_token"]
     )
 
     token = create_access_token(user.id, user.email, user.role)
