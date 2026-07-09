@@ -120,7 +120,7 @@ async def test_create_booking_already_booked_409(mock_create, mock_get_slot, cli
 
 @pytest.mark.asyncio
 @patch("app.services.booking.get_slot", new_callable=AsyncMock)
-async def test_create_booking_within_notice_window_400(mock_get_slot, client):
+async def test_create_booking_within_notice_window_422(mock_get_slot, client):
     # slot starts in 1 hour but min notice is 24h → window has passed (service raises 422)
     mock_get_slot.return_value = make_mock_slot(
         start_time=NOW + timedelta(hours=1),
