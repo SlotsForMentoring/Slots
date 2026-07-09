@@ -11,6 +11,7 @@ class SlotCreate(BaseModel):
 
 
 class BookingInfo(BaseModel):
+    id: uuid.UUID
     trainee_name: str
     trainee_email: str
     agenda: str | None
