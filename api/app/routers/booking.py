@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, BackgroundTasks, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
@@ -9,7 +9,7 @@ from app.models.user import User
 from app.models.booking import Booking
 from app.models.slots import Slot
 from app.schemas.booking import BookingCreate, BookingResponse
-from app.services.booking import book_slot
+from app.services.booking import book_slot, create_meeting_and_store
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
 
@@ -17,15 +17,31 @@ router = APIRouter(prefix="/bookings", tags=["bookings"])
 @router.post("", response_model=BookingResponse, status_code=201)
 async def create_booking(
     body: BookingCreate,
+    background_tasks: BackgroundTasks,
     user: User = Depends(require_role("trainee")),
     session: AsyncSession = Depends(get_db),
 ):
-    return await book_slot(
+    booking = await book_slot(
         session,
         body.slot_id,
         user.id,
         body.agenda,
     )
+
+    volunteer = booking.slot.volunteer
+    background_tasks.add_task(
+        create_meeting_and_store,
+        booking_id=booking.id,
+        refresh_token=volunteer.google_refresh_token,
+        volunteer_name=volunteer.name,
+        volunteer_email=volunteer.email,
+        trainee_name=booking.trainee.name,
+        trainee_email=booking.trainee.email,
+        start_time=booking.slot.start_time,
+        end_time=booking.slot.end_time,
+    )
+
+    return booking
 
 
 @router.get("/mine", response_model=list[BookingResponse])
