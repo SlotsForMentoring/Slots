@@ -16,6 +16,7 @@ class User(Base):
     name: Mapped[str] = mapped_column(String(255), nullable=False)
     profile_picture: Mapped[str | None] = mapped_column(Text, nullable=True)
     role: Mapped[str] = mapped_column(String(50), nullable=False, default="trainee")
+    google_refresh_token: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=lambda: datetime.now(timezone.utc)
     )
