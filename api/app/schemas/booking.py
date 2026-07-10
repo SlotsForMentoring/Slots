@@ -23,6 +23,7 @@ class BookingResponse(BaseModel):
     trainee_name: str
     agenda: str | None
     status: str
+    meet_link: str | None
     created_at: datetime
 
     model_config = {"from_attributes": True}
