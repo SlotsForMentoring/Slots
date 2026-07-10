@@ -74,7 +74,7 @@ async def create_calendar_event(
     async with httpx.AsyncClient() as client:
         response = await client.post(
             GOOGLE_CALENDAR_EVENTS_URL,
-            params={"conferenceDataVersion": 1},
+            params={"conferenceDataVersion": 1, "sendUpdates": "all"},
             headers={"Authorization": f"Bearer {access_token}"},
             json=body,
         )
