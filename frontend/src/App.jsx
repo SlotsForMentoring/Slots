@@ -14,13 +14,6 @@ import AvailableSlotsPage from '@/pages/AvailableSlotsPage'
 import MySlots            from '@/pages/MySlots'
 import MyBookings         from '@/pages/MyBookings'
 
-const Placeholder = ({ title }) => (
-  <div className="mx-auto max-w-5xl px-6 py-16">
-    <h1 className="text-3xl font-bold tracking-tight text-gray-900">{title}</h1>
-    <p className="mt-2 text-gray-500">Coming in a future sprint.</p>
-  </div>
-)
-
 function AppRoutes() {
   const setUser   = useAuthStore((s) => s.setUser)
   const user      = useAuthStore((s) => s.user)
