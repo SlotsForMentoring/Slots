@@ -1,21 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '@/services/api'
-
-function formatDate(iso) {
-  return new Date(iso).toLocaleDateString('en-GB', {
-    weekday: 'short',
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  })
-}
-
-function formatTime(iso) {
-  return new Date(iso).toLocaleTimeString('en-GB', {
-    hour: '2-digit',
-    minute: '2-digit',
-  })
-}
+import { formatDate, formatTime } from '@/lib/dateUtils'
 
 function isPast(iso) {
   return new Date(iso) < new Date()
