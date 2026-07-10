@@ -17,14 +17,6 @@ function startOfDay(date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate())
 }
 
-/**
- * CalendarGrid — reusable month-view calendar.
- *
- * Props:
- *   markedDates  { [dateStr]: { type: 'available' | 'booked' | 'mixed' } }
- *   selectedDate  string | null  — highlighted day (YYYY-MM-DD)
- *   onDayClick   (dateStr) => void
- */
 export default function CalendarGrid({ markedDates = {}, selectedDate, onDayClick }) {
   const today = startOfDay(new Date())
   const [viewDate, setViewDate] = useState(
@@ -36,23 +28,20 @@ export default function CalendarGrid({ markedDates = {}, selectedDate, onDayClic
 
   const firstDay   = new Date(year, month, 1)
   const lastDay    = new Date(year, month + 1, 0)
-  const startPad   = firstDay.getDay()           // 0 = Sun
+  const startPad   = firstDay.getDay()
   const endPad     = 6 - lastDay.getDay()
 
   const cells = []
 
-  // Trailing days from previous month
   const prevLast = new Date(year, month, 0)
   for (let i = startPad - 1; i >= 0; i--) {
     cells.push({ date: new Date(year, month - 1, prevLast.getDate() - i), current: false })
   }
 
-  // Current month days
   for (let d = 1; d <= lastDay.getDate(); d++) {
     cells.push({ date: new Date(year, month, d), current: true })
   }
 
-  // Leading days from next month
   for (let d = 1; d <= endPad; d++) {
     cells.push({ date: new Date(year, month + 1, d), current: false })
   }
