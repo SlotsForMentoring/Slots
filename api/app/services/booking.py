@@ -88,5 +88,3 @@ async def create_meeting_and_store(
             await set_meet_link(session, booking_id, meet_link)
     except Exception:
         logger.warning("Failed to store meet_link for booking %s", booking_id, exc_info=True)
-
-        
