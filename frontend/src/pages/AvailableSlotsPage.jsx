@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '@/services/api'
-import Button from '@/components/atoms/Button'
+import { Button } from '@/components/atoms'
 import { formatDate, formatTime } from '@/lib/dateUtils'
 
 function SlotCard({ slot, onBook }) {

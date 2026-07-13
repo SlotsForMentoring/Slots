@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '@/services/api'
-import { StatusBadge } from '@/components/atoms/Badge'
-import Button from '@/components/atoms/Button'
-import CalendarGrid from '@/components/calendar/CalendarGrid'
-import SlotCreateModal from '@/components/calendar/SlotCreateModal'
+import { Button, StatusBadge } from '@/components/atoms'
+import { CalendarGrid } from '@/features/calendar/CalendarGrid'
+import { SlotCreateModal } from '@/features/calendar/SlotCreateModal'
 import { formatDate, formatTime } from '@/lib/dateUtils'
 
 function SlotCard({ slot, onDelete }) {

@@ -2,9 +2,7 @@ import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { api } from '@/services/api'
-import Logo from '@/components/atoms/Logo'
-import Button from '@/components/atoms/Button'
-import { RoleBadge } from '@/components/atoms/Badge'
+import { Logo, Button, RoleBadge } from '@/components/atoms'
 import { cn } from '@/lib/cn'
 
 const NAV_LINKS = {
