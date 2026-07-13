@@ -13,6 +13,8 @@ import AdminUsersPage     from '@/pages/AdminUsersPage'
 import AvailableSlotsPage from '@/pages/AvailableSlotsPage'
 import MySlots            from '@/pages/MySlots'
 import MyBookings         from '@/pages/MyBookings'
+import PrivacyPolicyPage  from '@/pages/PrivacyPolicyPage'
+import TermsOfServicePage from '@/pages/TermsOfServicePage'
 
 function AppRoutes() {
   const setUser   = useAuthStore((s) => s.setUser)
@@ -28,8 +30,8 @@ function AppRoutes() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
@@ -38,7 +40,9 @@ function AppRoutes() {
     <Routes>
       <Route element={<RootLayout />}>
 
-        <Route path="/"      element={<LandingPage />} />
+        <Route path="/"       element={<LandingPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms"   element={<TermsOfServicePage />} />
         <Route path="/login" element={
           user
             ? <Navigate to={user.role === 'admin' ? '/admin/users' : '/'} replace />
