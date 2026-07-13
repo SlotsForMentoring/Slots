@@ -14,10 +14,10 @@ function UserCard({ user, onRoleChange }) {
   }
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm flex flex-col sm:flex-row sm:items-center gap-4">
+    <div className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-soft-sm)] flex flex-col sm:flex-row sm:items-center gap-4">
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-gray-900 truncate">{user.name}</p>
-        <p className="text-xs text-gray-500 mt-0.5 truncate">{user.email}</p>
+        <p className="text-sm font-semibold text-foreground truncate">{user.name}</p>
+        <p className="text-xs text-muted-foreground mt-0.5 truncate">{user.email}</p>
       </div>
       <div className="flex items-center gap-3">
         <RoleBadge role={user.role} />
@@ -25,7 +25,7 @@ function UserCard({ user, onRoleChange }) {
           value={user.role}
           onChange={handleChange}
           disabled={updating}
-          className="rounded-xl border border-gray-200 px-3 py-1.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent transition disabled:opacity-50"
+          className="rounded-xl border border-border bg-card px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition disabled:opacity-50"
         >
           {ROLES.map((r) => (
             <option key={r} value={r}>{r}</option>
@@ -54,42 +54,44 @@ export default function AdminUsersPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-5 sm:px-6 py-10 sm:py-14">
+    <div className="min-h-screen bg-background">
+      <div className="mx-auto max-w-3xl px-5 sm:px-6 py-10 sm:py-14">
 
-      <div className="mb-8 sm:mb-10">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">Users</h1>
-        <p className="mt-1.5 text-sm sm:text-base text-gray-500">
-          Manage roles for all registered users.
-        </p>
+        <div className="mb-8 sm:mb-10">
+          <p className="[font-family:var(--font-family-display)] text-[26px] font-semibold tracking-tight text-foreground">Users</p>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            Manage roles for all registered users.
+          </p>
+        </div>
+
+        {loading && (
+          <div className="flex justify-center py-20">
+            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          </div>
+        )}
+
+        {error && (
+          <div className="rounded-2xl border border-destructive/30 bg-destructive/5 p-5 text-sm text-destructive font-medium">
+            {error}
+          </div>
+        )}
+
+        {!loading && !error && users.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-20 text-center">
+            <p className="text-base font-semibold text-foreground">No users yet</p>
+            <p className="mt-1 text-sm text-muted-foreground">Users will appear here once they sign in.</p>
+          </div>
+        )}
+
+        {!loading && !error && users.length > 0 && (
+          <div className="flex flex-col gap-3">
+            {users.map((user) => (
+              <UserCard key={user.id} user={user} onRoleChange={handleRoleChange} />
+            ))}
+          </div>
+        )}
+
       </div>
-
-      {loading && (
-        <div className="flex justify-center py-20">
-          <div className="w-6 h-6 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
-        </div>
-      )}
-
-      {error && (
-        <div className="rounded-2xl border border-danger-500/30 bg-danger-500/5 p-5 text-sm text-danger-600 font-medium">
-          {error}
-        </div>
-      )}
-
-      {!loading && !error && users.length === 0 && (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <p className="text-base font-semibold text-gray-900">No users yet</p>
-          <p className="mt-1 text-sm text-gray-500">Users will appear here once they sign in.</p>
-        </div>
-      )}
-
-      {!loading && !error && users.length > 0 && (
-        <div className="flex flex-col gap-3">
-          {users.map((user) => (
-            <UserCard key={user.id} user={user} onRoleChange={handleRoleChange} />
-          ))}
-        </div>
-      )}
-
     </div>
   )
 }
