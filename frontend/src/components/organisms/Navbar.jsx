@@ -5,6 +5,7 @@ import { api } from '@/services/api'
 import { Logo, Button, RoleBadge } from '@/components/atoms'
 import { cn } from '@/lib/cn'
 
+// Which nav links show up depends entirely on the signed-in user's role.
 const NAV_LINKS = {
   trainee:   [
     { label: 'Browse Slots', to: '/slots' },
@@ -22,16 +23,16 @@ const linkClass = ({ isActive }) =>
   cn(
     'text-sm font-medium px-1 py-0.5 border-b-2 transition-colors duration-150',
     isActive
-      ? 'text-brand-600 border-brand-500'
-      : 'text-gray-600 hover:text-gray-900 border-transparent',
+      ? 'text-flame-600 dark:text-flame-400 border-flame-500'
+      : 'text-muted-foreground hover:text-foreground border-transparent',
   )
 
 const mobileLinkClass = ({ isActive }) =>
   cn(
     'block px-3 py-2.5 text-sm font-medium rounded-lg transition-colors duration-150',
     isActive
-      ? 'text-brand-600 bg-brand-50'
-      : 'text-gray-700 hover:bg-gray-50',
+      ? 'text-flame-600 dark:text-flame-400 bg-flame-50 dark:bg-flame-500/10'
+      : 'text-foreground hover:bg-muted',
   )
 
 export default function Navbar() {
@@ -49,11 +50,11 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-gray-100 bg-white/80 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
 
-        <NavLink to="/" aria-label="AgenGate home">
-          <Logo size="sm" />
+        <NavLink to="/" aria-label="iMeet home">
+          <Logo size="xl" />
         </NavLink>
 
         {links.length > 0 && (
@@ -70,7 +71,7 @@ export default function Navbar() {
           {user ? (
             <>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-500">{user.name}</span>
+                <span className="text-sm text-muted-foreground">{user.name}</span>
                 <RoleBadge role={user.role} />
               </div>
               <Button variant="ghost" size="sm" onClick={handleLogout}>
@@ -85,7 +86,7 @@ export default function Navbar() {
         </div>
 
         <button
-          className="sm:hidden flex items-center justify-center w-9 h-9 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+          className="sm:hidden flex items-center justify-center w-11 h-11 -mr-2 rounded-lg text-muted-foreground hover:bg-muted transition-colors"
           onClick={() => setOpen((o) => !o)}
           aria-label={open ? 'Close menu' : 'Open menu'}
         >
@@ -103,10 +104,10 @@ export default function Navbar() {
       </nav>
 
       {open && (
-        <div className="sm:hidden border-t border-gray-100 bg-white px-4 pb-4">
+        <div className="sm:hidden border-t border-border bg-card px-4 pb-4">
           {user && (
-            <div className="flex items-center gap-2 py-3 mb-1 border-b border-gray-100">
-              <span className="text-sm text-gray-500">{user.name}</span>
+            <div className="flex items-center gap-2 py-3 mb-1 border-b border-border">
+              <span className="text-sm text-muted-foreground">{user.name}</span>
               <RoleBadge role={user.role} />
             </div>
           )}

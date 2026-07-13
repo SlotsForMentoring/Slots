@@ -1,12 +1,12 @@
 import { cn } from '@/lib/cn'
 
-/** Logo — the iMeet wordmark, served from /public/logo.png at a fixed height per `size`. */
+/** Logo — the AgenGate wordmark, served from /public/logo.png at a fixed height per `size`. */
 export function Logo({ size = 'md', className }) {
   const heights = {
     sm: 'h-5',
     md: 'h-6',
     lg: 'h-8',
-    xl: 'h-10',
+    xl: 'h-7',
   }[size]
 
   return (
