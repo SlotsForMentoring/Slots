@@ -1,28 +1,89 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
   /* Typography */
   --font-family-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-family-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
 
-  /* Brand palette — purple */
-  --color-brand-50:  #faf5ff;
-  --color-brand-100: #f3e8ff;
-  --color-brand-200: #e9d5ff;
-  --color-brand-300: #d8b4fe;
-  --color-brand-400: #c084fc;
-  --color-brand-500: #aa3bff;
-  --color-brand-600: #9328e8;
-  --color-brand-700: #7e22ce;
-  --color-brand-800: #6b21a8;
-  --color-brand-900: #581c87;
+  /* ── Brand tokens (red / black / white) ──
+     Light: light-grey bg, white cards, near-black text, grey borders, red primary buttons.
+     Dark: black bg, slightly-lighter-black cards, white text, white primary buttons (inverted),
+     red stays reserved for the logo mark + sparing accents in both modes. */
+  --color-ink-50:  #FAFAF9;
+  --color-ink-100: #F1EFE8;
+  --color-ink-200: #E4E2DA;
+  --color-ink-300: #CBC9C1;
+  --color-ink-400: #A0A0A0;
+  --color-ink-500: #5F5E5A;
+  --color-ink-600: #3A3A38;
+  --color-ink-700: #26251F;
+  --color-ink-800: #1A1A1A;
+  --color-ink-900: #141414;
 
-  /* Semantic */
-  --color-danger-500:  #ef4444;
-  --color-danger-600:  #dc2626;
-  --color-success-500: #22c55e;
-  --color-success-600: #16a34a;
-  --color-warning-500: #f59e0b;
+  --color-flame-50:  #FCEBEB;
+  --color-flame-100: #F7C1C1;
+  --color-flame-400: #E86B6A;
+  --color-flame-500: #E24B4A;
+  --color-flame-600: #C93B3A;
+  --color-flame-700: #A32D2D;
+
+  /* Semantic surface/text/border roles — driven by CSS variables so they flip in dark mode */
+  --color-background:        var(--surface-app);
+  --color-foreground:        var(--text-ink);
+  --color-card:               var(--surface-card);
+  --color-card-foreground:    var(--text-ink);
+  --color-primary:            var(--brand-primary);
+  --color-primary-foreground: var(--brand-primary-foreground);
+  --color-secondary:          var(--surface-muted);
+  --color-secondary-foreground: var(--text-ink);
+  --color-muted:               var(--surface-muted);
+  --color-muted-foreground:    var(--text-muted);
+  --color-accent:              var(--color-flame-500);
+  --color-accent-foreground:   #FFFFFF;
+  --color-destructive:              var(--brand-destructive);
+  --color-destructive-foreground:   #FFFFFF;
+  --color-border:              var(--border-default);
+  --color-input:               var(--border-default);
+  --color-ring:                var(--brand-primary);
+
+  /* Radius scale — 12 / 16 / 20 / 24 / 28px, within the premium spec range */
+  --radius-sm:  0.75rem;
+  --radius-md:  1rem;
+  --radius-lg:  1.25rem;
+  --radius-xl:  1.5rem;
+  --radius-2xl: 1.75rem;
+  --radius-full: 999px;
+
+  /* Soft shadow tokens */
+  --shadow-soft-sm: 0 1px 2px rgba(20, 20, 20, 0.04), 0 1px 1px rgba(20, 20, 20, 0.03);
+  --shadow-soft-md: 0 4px 16px rgba(20, 20, 20, 0.06), 0 2px 6px rgba(20, 20, 20, 0.04);
+  --shadow-soft-lg: 0 16px 40px rgba(20, 20, 20, 0.10), 0 4px 12px rgba(20, 20, 20, 0.05);
+}
+
+:root {
+  --surface-app: #FAFAF9;
+  --surface-card: #FFFFFF;
+  --surface-muted: #F1EFE8;
+  --text-ink: #1A1A1A;
+  --text-muted: #5F5E5A;
+  --border-default: #E4E2DA;
+  --brand-primary: #E24B4A;
+  --brand-primary-foreground: #FFFFFF;
+  --brand-destructive: #A32D2D;
+}
+
+.dark {
+  --surface-app: #141414;
+  --surface-card: #1F1F1E;
+  --surface-muted: #262624;
+  --text-ink: #FAFAFA;
+  --text-muted: #A0A0A0;
+  --border-default: #313130;
+  --brand-primary: #FFFFFF;
+  --brand-primary-foreground: #141414;
+  --brand-destructive: #E86B6A;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -35,4 +96,34 @@ html {
 body {
   margin: 0;
   font-family: var(--font-family-sans);
+}
+
+/* Smooth floating movement for the two decorative shapes behind the
+   hero feature screenshot. */
+@keyframes blob-1 {
+  0%, 100% { transform: translate(-85%, -50%) scale(1); }
+  33%      { transform: translate(-70%, -65%) scale(1.15); }
+  66%      { transform: translate(-95%, -35%) scale(0.9); }
+}
+
+@keyframes blob-2 {
+  0%, 100% { transform: translate(-15%, -50%) scale(1); }
+  33%      { transform: translate(-30%, -35%) scale(0.9); }
+  66%      { transform: translate(-5%, -65%) scale(1.15); }
+}
+
+.animate-blob-1 { animation: blob-1 4.5s ease-in-out infinite; }
+.animate-blob-2 { animation: blob-2 5.5s ease-in-out infinite; }
+
+/* Scrolling wave crest used by the "How it works" step circles' water-fill
+   hover effect. The svg is double-width so translating by -50% loops it
+   seamlessly. */
+@keyframes wave-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.wave-scroll { animation: wave-scroll 2.2s linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-blob-1, .animate-blob-2, .wave-scroll { animation: none; }
 }
