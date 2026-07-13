@@ -28,9 +28,11 @@ export function Avatar({ name, src, size = 'md', className, ring = false }) {
       {src ? (
         <img src={src} alt={name} className="h-full w-full object-cover" />
       ) : (
-        <span aria-hidden="true">{initials(name)}</span>
+        <>
+          <span aria-hidden="true">{initials(name)}</span>
+          <span className="sr-only">{name}</span>
+        </>
       )}
-      <span className="sr-only">{name}</span>
     </div>
   )
 }

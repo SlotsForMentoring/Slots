@@ -72,7 +72,7 @@ export function SlotCreateModal({ date, onCreated, onClose }) {
         </div>
         <button
           onClick={onClose}
-          className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted transition"
+          className="flex h-10 w-10 items-center justify-center -mr-1.5 rounded-lg text-muted-foreground hover:bg-muted transition"
           aria-label="Close"
         >
           <X className="w-5 h-5" aria-hidden="true" />

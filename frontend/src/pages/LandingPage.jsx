@@ -375,7 +375,7 @@ export default function LandingPage() {
             </p>
           </Reveal>
 
-          <div className="mt-10 sm:mt-12 grid gap-14 grid-cols-1 sm:grid-cols-3 sm:gap-14 lg:gap-20">
+          <div className="mt-10 sm:mt-12 grid gap-14 grid-cols-1 lg:grid-cols-3 lg:gap-20">
             {STEPS.map(({ step, title, description }, i) => (
               <Reveal key={step} delay={Math.min(i * 0.1, 0.3)} className="flex justify-center">
                 <div className="relative h-40 w-40 sm:h-48 sm:w-48">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/atoms'
 
@@ -16,13 +16,7 @@ function hasConsented() {
  * available on every page.
  */
 export function ConsentBanner() {
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    if (!hasConsented()) {
-      setVisible(true)
-    }
-  }, [])
+  const [visible, setVisible] = useState(() => !hasConsented())
 
   const accept = () => {
     window.localStorage.setItem(CONSENT_KEY, 'true')
