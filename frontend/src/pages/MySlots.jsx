@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '@/services/api'
-import { Button, StatusBadge } from '@/components/atoms'
+import { Badge, Button } from '@/components/atoms'
 import { CalendarGrid } from '@/features/calendar/CalendarGrid'
 import { SlotCreateModal } from '@/features/calendar/SlotCreateModal'
 import { formatDate, formatTime } from '@/lib/dateUtils'
@@ -37,7 +37,9 @@ function SlotCard({ slot, onDelete }) {
             {formatTime(slot.start_time)} – {formatTime(slot.end_time)}
           </p>
         </div>
-        <StatusBadge status={isBooked ? 'booked' : 'available'} />
+        <Badge variant={isBooked ? 'warning' : 'success'} dot>
+          {isBooked ? 'Booked' : 'Available'}
+        </Badge>
       </div>
 
       {isBooked && slot.booking && (
@@ -62,7 +64,7 @@ function SlotCard({ slot, onDelete }) {
       {!isBooked && (
         <div className="mt-auto">
           {!confirm ? (
-            <Button variant="danger" size="sm" fullWidth onClick={() => setConfirm(true)}>
+            <Button variant="destructive" size="sm" fullWidth onClick={() => setConfirm(true)}>
               Delete slot
             </Button>
           ) : (
@@ -72,7 +74,7 @@ function SlotCard({ slot, onDelete }) {
                 <Button variant="secondary" size="sm" fullWidth onClick={() => setConfirm(false)} disabled={deleting}>
                   Cancel
                 </Button>
-                <Button variant="danger" size="sm" fullWidth loading={deleting} onClick={handleDelete}>
+                <Button variant="destructive" size="sm" fullWidth loading={deleting} onClick={handleDelete}>
                   Confirm
                 </Button>
               </div>
