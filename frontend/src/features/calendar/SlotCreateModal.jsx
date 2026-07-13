@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { api } from '@/services/api'
-import Button from '@/components/atoms/Button'
+import { Button } from '@/components/atoms'
 import { formatDate } from '@/lib/dateUtils'
 
 const HOURS = Array.from({ length: 24 }, (_, i) =>
@@ -8,7 +8,7 @@ const HOURS = Array.from({ length: 24 }, (_, i) =>
 )
 
 function getMinAllowedHour(dateStr) {
- 
+
   const minTime = new Date(Date.now() + 25 * 60 * 60 * 1000)
   const [y, m, d] = dateStr.split('-').map(Number)
   const selectedDay = new Date(y, m - 1, d)
@@ -19,7 +19,7 @@ function getMinAllowedHour(dateStr) {
   return minTime.getHours() + 1
 }
 
-export default function SlotCreateModal({ date, onCreated, onClose }) {
+export function SlotCreateModal({ date, onCreated, onClose }) {
   const minHour = getMinAllowedHour(date)
   const defaultHour = HOURS.find((_, i) => i >= minHour) ?? null
 

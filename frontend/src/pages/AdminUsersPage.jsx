@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '@/services/api'
-import { RoleBadge } from '@/components/atoms/Badge'
+import { RoleBadge } from '@/components/atoms'
 
 const ROLES = ['trainee', 'volunteer', 'admin']
 

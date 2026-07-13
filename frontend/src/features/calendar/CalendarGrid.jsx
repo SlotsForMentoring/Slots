@@ -17,7 +17,7 @@ function startOfDay(date) {
   return new Date(date.getFullYear(), date.getMonth(), date.getDate())
 }
 
-export default function CalendarGrid({ markedDates = {}, selectedDate, onDayClick }) {
+export function CalendarGrid({ markedDates = {}, selectedDate, onDayClick }) {
   const today = startOfDay(new Date())
   const [viewDate, setViewDate] = useState(
     new Date(today.getFullYear(), today.getMonth(), 1)
