@@ -115,10 +115,10 @@ body {
   66%      { border-radius: 35% 65% 55% 45% / 60% 30% 70% 40%; }
 }
 
-.animate-orbit-1 { animation: orbit-cw 24s linear infinite; }
-.animate-orbit-2 { animation: orbit-ccw 16s linear infinite; }
-.animate-orbit-3 { animation: orbit-cw 10s linear infinite; }
-.animate-orbit-4 { animation: orbit-ccw 6.5s linear infinite; }
+.animate-orbit-1 { animation: orbit-cw 95s linear infinite; }
+.animate-orbit-2 { animation: orbit-ccw 70s linear infinite; }
+.animate-orbit-3 { animation: orbit-cw 48s linear infinite; }
+.animate-orbit-4 { animation: orbit-ccw 14s linear infinite; }
 .animate-blob-morph { animation: blob-morph 5s ease-in-out infinite; }
 
 /* Scrolling wave crest used by the "How it works" step circles' water-fill
