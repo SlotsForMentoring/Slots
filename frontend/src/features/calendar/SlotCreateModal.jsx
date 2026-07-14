@@ -4,6 +4,7 @@ import { api } from '@/services/api'
 import { Button } from '@/components/atoms'
 import { BottomSheet } from '@/components/molecules'
 import { formatDate } from '@/lib/dateUtils'
+import { celebrate } from '@/lib/confetti'
 
 const HOURS = Array.from({ length: 24 }, (_, i) =>
   String(i).padStart(2, '0') + ':00'
@@ -51,6 +52,7 @@ export function SlotCreateModal({ date, onCreated, onClose }) {
       })
       onCreated(slot)
       onClose()
+      celebrate()
     } catch (e) {
       const msg = e?.message || ''
       if (msg.includes('409')) setError('You already have a slot at this time.')

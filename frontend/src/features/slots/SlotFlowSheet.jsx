@@ -5,6 +5,7 @@ import { Avatar, Button, TextAreaField } from '@/components/atoms'
 import { BottomSheet } from '@/components/molecules'
 import { formatDate, formatTime } from '@/lib/dateUtils'
 import { googleCalendarUrl, shareBooking } from '@/lib/calendar'
+import { celebrate } from '@/lib/confetti'
 import { api } from '@/services/api'
 
 const stepVariants = {
@@ -44,6 +45,7 @@ export function SlotFlowSheet({ slot, onClose, onBooked }) {
       setBooking(result)
       setStep('success')
       onBooked(slot.id)
+      celebrate()
     } catch (e) {
       const msg = e?.message || ''
       if (msg.includes('409')) setError('This slot was just booked by someone else.')
