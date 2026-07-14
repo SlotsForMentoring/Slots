@@ -6,8 +6,12 @@ import { formatDate, formatTime } from '@/lib/dateUtils'
 
 const MotionCard = motion(Card)
 
-/** MySlotCard — a volunteer mentor's own slot, with a delete flow when it isn't booked yet. */
-export function MySlotCard({ slot, index = 0, onDelete }) {
+/**
+ * MySlotCard — a volunteer mentor's own slot. Offers a delete flow when
+ * it isn't booked yet, or a cancel-booking flow (which frees the slot
+ * back up and notifies the trainee via Google Calendar) when it is.
+ */
+export function MySlotCard({ slot, index = 0, onDelete, onCancelBooking }) {
   const isBooked = slot.is_booked
   const [confirm, setConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -24,6 +28,22 @@ export function MySlotCard({ slot, index = 0, onDelete }) {
       if (msg.includes('409')) setDeleteError('Slot is already booked and cannot be deleted.')
       else if (msg.includes('403')) setDeleteError('You can only delete your own slots.')
       else setDeleteError('Could not delete slot. Please try again.')
+      setConfirm(false)
+    } finally {
+      setDeleting(false)
+    }
+  }
+
+  const handleCancelBooking = async () => {
+    setDeleting(true)
+    setDeleteError(null)
+    try {
+      await api.deleteBooking(slot.booking.id)
+      onCancelBooking(slot.id)
+    } catch (e) {
+      const msg = e?.message || ''
+      if (msg.includes('403')) setDeleteError('You can only cancel bookings on your own slots.')
+      else setDeleteError('Could not cancel booking. Please try again.')
       setConfirm(false)
     } finally {
       setDeleting(false)
@@ -59,6 +79,33 @@ export function MySlotCard({ slot, index = 0, onDelete }) {
               <p className="text-foreground text-xs mt-1 line-clamp-2">{slot.booking.agenda}</p>
             )}
           </div>
+        </div>
+      )}
+
+      {isBooked && slot.booking && (
+        <div className="mt-auto">
+          {!confirm ? (
+            <Button variant="destructive" size="sm" className="w-full" onClick={() => setConfirm(true)}>
+              Cancel booking
+            </Button>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <p className="text-xs text-muted-foreground text-center">
+                Cancel {slot.booking.trainee_name}'s booking?
+              </p>
+              <div className="flex gap-2">
+                <Button variant="secondary" size="sm" className="flex-1" onClick={() => setConfirm(false)} disabled={deleting}>
+                  Keep it
+                </Button>
+                <Button variant="destructive" size="sm" className="flex-1" loading={deleting} onClick={handleCancelBooking}>
+                  Confirm
+                </Button>
+              </div>
+            </div>
+          )}
+          {deleteError && (
+            <p className="mt-2 text-xs text-destructive font-medium">{deleteError}</p>
+          )}
         </div>
       )}
 

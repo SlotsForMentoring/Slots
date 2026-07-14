@@ -33,5 +33,14 @@ export function useMySlots() {
     setSlots((prev) => prev.filter((s) => s.id !== id))
   }, [])
 
-  return { slots, state, reload, addSlot, removeSlot }
+  // Cancelling the booking on a slot doesn't remove the slot itself - it
+  // just frees it back up, so flip it back to available in place rather
+  // than filtering it out like removeSlot does.
+  const cancelSlotBooking = useCallback((slotId) => {
+    setSlots((prev) =>
+      prev.map((s) => (s.id === slotId ? { ...s, is_booked: false, booking: null } : s)),
+    )
+  }, [])
+
+  return { slots, state, reload, addSlot, removeSlot, cancelSlotBooking }
 }

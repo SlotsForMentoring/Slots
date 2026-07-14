@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.crud.booking import (
     create_booking,
     get_slot,
-    set_meet_link,
+    set_calendar_info,
 )
 from app.database import async_session
 from app.models.booking import Booking
@@ -63,14 +63,15 @@ async def create_meeting_and_store(
     start_time: datetime,
     end_time: datetime,
 ) -> None:
-    """Background task: create the Meet link and persist it on the booking.
+    """Background task: create the Meet link and persist it (plus the
+    event_id, needed later to cancel it) on the booking.
 
     This runs after the booking's HTTP response has already been sent, so
     the request's DB session is closed by then - it opens its own. Never
     raises: a calendar/Meet failure must never surface once the booking
     itself has already succeeded, so failures are logged and swallowed.
     """
-    meet_link = await calendar.create_pairing_event(
+    event = await calendar.create_pairing_event(
         refresh_token=refresh_token,
         volunteer_name=volunteer_name,
         volunteer_email=volunteer_email,
@@ -80,11 +81,20 @@ async def create_meeting_and_store(
         end_time=end_time,
     )
 
-    if meet_link is None:
+    if event is None:
         return
 
     try:
         async with async_session() as session:
-            await set_meet_link(session, booking_id, meet_link)
+            await set_calendar_info(session, booking_id, event.meet_link, event.event_id)
     except Exception:
-        logger.warning("Failed to store meet_link for booking %s", booking_id, exc_info=True)
+        logger.warning("Failed to store calendar info for booking %s", booking_id, exc_info=True)
+
+
+async def cancel_meeting(refresh_token: str | None, event_id: str | None) -> None:
+    """Background task: cancel the Calendar event for a booking that was
+    just deleted, notifying both attendees via Google's own cancellation
+    email. Runs after the booking's HTTP response has already been sent,
+    same as create_meeting_and_store - never raises.
+    """
+    await calendar.cancel_pairing_event(refresh_token=refresh_token, event_id=event_id)
