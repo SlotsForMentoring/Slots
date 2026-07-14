@@ -3,8 +3,8 @@ import { api } from '@/services/api'
 
 /**
  * useMyBookings — fetches the signed-in trainee's bookings.
- * Mirrors the useAvailableSlots/useMySlots/useAllSlots shape (`slots`-like
- * data + `state` + `reload`) so every list page in the app follows the same
+ * Mirrors the useAvailableSlots/useMySlots shape (`slots`-like data +
+ * `state` + `reload`) so every list page in the app follows the same
  * loading/error pattern.
  */
 export function useMyBookings() {
@@ -30,5 +30,9 @@ export function useMyBookings() {
     fetchBookings()
   }, [fetchBookings])
 
-  return { bookings, state, reload }
+  const removeBooking = useCallback((id) => {
+    setBookings((prev) => prev.filter((b) => b.id !== id))
+  }, [])
+
+  return { bookings, state, reload, removeBooking }
 }
