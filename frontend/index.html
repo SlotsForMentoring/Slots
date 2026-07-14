@@ -7,8 +7,53 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>iMeet</title>
+    <style>
+      /* Inlined so the splash paints immediately on load, before the app's
+         own CSS/JS bundle has arrived — the whole point of a splash screen
+         is covering that gap, so it can't depend on the thing it's covering
+         for. main.jsx fades #app-splash out and removes it once React has
+         mounted. */
+      #app-splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+        background: #faf7f5;
+        transition: opacity 0.45s ease;
+      }
+      #app-splash img {
+        width: 148px;
+        height: auto;
+      }
+      #app-splash .app-splash-ring {
+        width: 34px;
+        height: 34px;
+        border-radius: 9999px;
+        border: 5px solid rgba(221, 36, 41, 0.18);
+        border-top-color: #dd2429;
+        animation: app-splash-spin 0.85s linear infinite;
+      }
+      #app-splash.app-splash-hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+      @keyframes app-splash-spin {
+        to { transform: rotate(360deg); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #app-splash .app-splash-ring { animation: none; }
+      }
+    </style>
   </head>
   <body>
+    <div id="app-splash" aria-hidden="true">
+      <img src="/logo.png" alt="" />
+      <div class="app-splash-ring"></div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
