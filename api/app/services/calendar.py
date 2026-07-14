@@ -159,6 +159,7 @@ async def create_pairing_event(
     results in None so a calendar hiccup never blocks a booking.
     """
     if not refresh_token:
+        logger.info("Skipping calendar event creation: volunteer has no stored google_refresh_token")
         return None
 
     try:
@@ -195,6 +196,10 @@ async def cancel_pairing_event(refresh_token: str | None, event_id: str | None) 
     because the calendar side-effect couldn't complete.
     """
     if not refresh_token or not event_id:
+        logger.info(
+            "Skipping calendar cancellation: %s missing",
+            "refresh_token" if not refresh_token else "event_id",
+        )
         return
 
     try:
