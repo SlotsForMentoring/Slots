@@ -70,7 +70,7 @@ export function SlotFlowSheet({ slot, onClose, onBooked }) {
         {step === 'detail' && (
           <motion.div key="detail" variants={stepVariants} initial="enter" animate="center" exit="exit" transition={{ duration: 0.2 }} className="flex flex-col gap-6">
             <div className="flex items-center gap-3">
-              <Avatar name={slot.volunteer_name} size="lg" />
+              <Avatar name={slot.volunteer_name} src={slot.volunteer_profile_picture} size="lg" />
               <div>
                 <p className="text-lg font-semibold text-foreground">{slot.volunteer_name}</p>
                 <p className="text-sm text-muted-foreground">Volunteer mentor</p>

@@ -11,6 +11,7 @@ class BookingCreate(BaseModel):
 class SlotInfo(BaseModel):
     id: uuid.UUID
     volunteer_name: str
+    volunteer_profile_picture: str | None = None
     start_time: datetime
     end_time: datetime
 

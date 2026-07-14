@@ -35,7 +35,7 @@ export function SlotCard({ slot, index = 0, onSelect }) {
         className="group flex w-full flex-col gap-4 rounded-xl border border-border bg-card p-5 text-left shadow-[var(--shadow-soft-md)] transition-shadow duration-200 hover:shadow-[var(--shadow-soft-lg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <div className="flex items-center gap-3">
-          <Avatar name={slot.volunteer_name} size="md" />
+          <Avatar name={slot.volunteer_name} src={slot.volunteer_profile_picture} size="md" />
           <div className="min-w-0 flex-1">
             <p className="truncate text-[15px] font-semibold text-foreground">{slot.volunteer_name}</p>
             <p className="text-xs text-muted-foreground">{formatDate(slot.start_time)}</p>

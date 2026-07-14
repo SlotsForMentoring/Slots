@@ -38,5 +38,9 @@ class Slot(Base):
         return self.volunteer.name if self.volunteer else ""
 
     @property
+    def volunteer_profile_picture(self) -> str | None:
+        return self.volunteer.profile_picture if self.volunteer else None
+
+    @property
     def is_booked(self) -> bool:
         return self.booking is not None

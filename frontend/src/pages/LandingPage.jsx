@@ -3,7 +3,12 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Calendar, Check, Clock, Share2 } from 'lucide-react'
 import { useAuthStore, GREETED_KEY } from '@/stores/authStore'
-import { Button, Heading, Logo } from '@/components/atoms'
+import { Avatar, Button, Heading, Logo } from '@/components/atoms'
+
+// Placeholder photo for the hero's product-preview mockups (they show a
+// fictional "Sarah Kim", not a real user, so a generated placeholder photo
+// service is the right fit here — same idea as lorem-picsum for images).
+const DEMO_AVATAR_URL = 'https://i.pravatar.cc/150?img=47'
 
 const MotionHeading = motion(Heading)
 
@@ -106,9 +111,7 @@ function SlotCardMockup() {
   return (
     <div className="pt-2 text-left">
       <div className="flex items-center gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-flame-500 text-sm font-semibold text-white">
-          SK
-        </div>
+        <Avatar name="Sarah Kim" src={DEMO_AVATAR_URL} size="md" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-[15px] font-semibold text-foreground">Sarah Kim</p>
           <p className="text-xs text-muted-foreground">Thursday, Jul 16</p>
@@ -133,9 +136,7 @@ function UpcomingBookingMockup() {
     <div className="pt-2 text-left">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-flame-500 text-xs font-semibold text-white">
-            SK
-          </div>
+          <Avatar name="Sarah Kim" src={DEMO_AVATAR_URL} size="sm" />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-foreground">Thursday, Jul 16</p>
             <p className="text-xs text-muted-foreground">2:00 PM – 3:00 PM</p>
