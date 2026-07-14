@@ -1,4 +1,6 @@
-from fastapi import APIRouter, BackgroundTasks, Depends
+from uuid import UUID
+
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
@@ -10,6 +12,7 @@ from app.models.booking import Booking
 from app.models.slots import Slot
 from app.schemas.booking import BookingCreate, BookingResponse
 from app.services.booking import book_slot, create_meeting_and_store
+from app.crud.booking import delete_booking
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
 
@@ -42,6 +45,20 @@ async def create_booking(
     )
 
     return booking
+
+
+@router.delete("/{booking_id}", status_code=204)
+async def cancel_booking(
+    booking_id: UUID,
+    user: User = Depends(require_role("trainee")),
+    session: AsyncSession = Depends(get_db),
+):
+    result = await delete_booking(session, booking_id, user.id)
+
+    if result == "not_found":
+        raise HTTPException(status_code=404, detail="Booking not found")
+    if result == "not_yours":
+        raise HTTPException(status_code=403, detail="You can only cancel your own bookings")
 
 
 @router.get("/mine", response_model=list[BookingResponse])
