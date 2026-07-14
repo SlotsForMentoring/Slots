@@ -33,27 +33,6 @@ async def set_meet_link(session: AsyncSession, booking_id: UUID, meet_link: str)
     await session.commit()
 
 
-async def delete_booking(
-    session: AsyncSession,
-    booking_id: UUID,
-    trainee_id: UUID,
-) -> str:
-    result = await session.execute(
-        select(Booking).where(Booking.id == booking_id)
-    )
-    booking = result.scalar_one_or_none()
-
-    if booking is None:
-        return "not_found"
-
-    if booking.trainee_id != trainee_id:
-        return "not_yours"
-
-    await session.delete(booking)
-    await session.commit()
-    return "deleted"
-
-
 async def create_booking(
     session: AsyncSession,
     slot_id: UUID,

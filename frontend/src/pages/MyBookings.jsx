@@ -9,7 +9,7 @@ function isPast(iso) {
 }
 
 export default function MyBookings() {
-  const { bookings, state, reload, removeBooking } = useMyBookings()
+  const { bookings, state, reload } = useMyBookings()
 
   const upcoming = bookings.filter((b) => !isPast(b.slot.end_time))
   const past     = bookings.filter((b) =>  isPast(b.slot.end_time))
@@ -55,7 +55,7 @@ export default function MyBookings() {
           <div className="mb-10">
             <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Upcoming</h2>
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-              {upcoming.map((b, i) => <BookingCard key={b.id} booking={b} index={i} onDelete={removeBooking} />)}
+              {upcoming.map((b, i) => <BookingCard key={b.id} booking={b} index={i} />)}
             </div>
           </div>
         )}

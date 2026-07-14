@@ -58,9 +58,6 @@ export const api = {
   createBooking: (data, mock) =>
     request('/bookings', { method: 'POST', body: data, mock }),
 
-  deleteBooking: (id, mock) =>
-    request(`/bookings/${id}`, { method: 'DELETE', mock }),
-
   getUsers: (mock) =>
     request('/admin/users', { mock }),
 
