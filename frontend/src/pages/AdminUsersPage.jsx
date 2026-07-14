@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { api } from '@/services/api'
 import { RoleBadge, Chip } from '@/components/atoms'
 
-const ROLES = ['all', 'trainee', 'volunteer', 'admin']
+const ROLES = ['trainee', 'volunteer', 'admin']
+const FILTERS = ['all', ...ROLES]
 
 function UserCard({ user, onRoleChange }) {
   const [updating, setUpdating] = useState(false)
@@ -92,7 +93,7 @@ export default function AdminUsersPage() {
           {!loading && !error && users.length > 0 && (
             <>
               <div className="flex flex-wrap gap-2 mb-6">
-                {ROLES.map((f) => (
+                {FILTERS.map((f) => (
                   <Chip key={f} selected={filter === f} onClick={() => setFilter(f)}>
                     {f.charAt(0).toUpperCase() + f.slice(1)}
                     {' '}({f === 'all' ? users.length : users.filter((u) => u.role === f).length})
