@@ -3,7 +3,9 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Calendar, Check, Clock, Share2 } from 'lucide-react'
 import { useAuthStore, GREETED_KEY } from '@/stores/authStore'
-import { Button, Logo } from '@/components/atoms'
+import { Button, Heading, Logo } from '@/components/atoms'
+
+const MotionHeading = motion(Heading)
 
 function roleHome(user) {
   if (user.role === 'admin') return '/admin/users'
@@ -51,9 +53,7 @@ function WelcomeHero({ user, onNavigate }) {
           {user.role === 'volunteer' ? 'Volunteer mentor' : user.role === 'admin' ? 'Admin' : 'Trainee'}
         </div>
 
-        <h1 className="[font-family:var(--font-family-display)] text-3xl sm:text-5xl font-semibold tracking-tight text-foreground leading-tight">
-          Hello, {firstName}.
-        </h1>
+        <Heading level="h1">Hello, {firstName}.</Heading>
 
         <p className="mt-4 sm:mt-6 text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
           {copy.subtitle}
@@ -203,22 +203,32 @@ function BookingScreenshot() {
   const total = SCREENS.length
 
   return (
-    <div className="isolate relative mx-auto my-10 h-[420px] w-full max-w-[420px] sm:my-12">
-      {/* Two soft color shapes drifting behind the screenshot — plain CSS
-          keyframe animation (see index.css) so it always runs, and backs
-          off automatically for prefers-reduced-motion. */}
-      <div
-        aria-hidden="true"
-        className="animate-blob-1 absolute left-1/2 top-1/2 -z-10 h-80 w-80 rounded-full bg-flame-400 opacity-70 blur-2xl dark:opacity-40"
-      />
-      <div
-        aria-hidden="true"
-        className="animate-blob-2 absolute left-1/2 top-1/2 -z-10 h-72 w-72 rounded-full bg-ink-400 opacity-60 blur-2xl dark:opacity-35 dark:bg-ink-200"
-      />
+    <div className="isolate relative mx-auto my-10 h-[360px] w-full max-w-[360px] sm:my-12 sm:h-[420px] sm:max-w-[420px]">
+      {/* Four crisp, solid-filled shapes orbiting the screenshot's center
+          like watch hands — a zero-size "pivot" at dead center rotates at
+          a constant speed, and each shape sits at a fixed distance from
+          it, so it sweeps in a perfect circle instead of drifting around.
+          Four different speeds/directions so they read as independent
+          hands, not one thing spinning. Plain CSS keyframe animation (see
+          index.css) so it always runs, and backs off automatically for
+          prefers-reduced-motion. */}
+      <div aria-hidden="true" className="animate-orbit-1 absolute left-1/2 top-1/2 -z-10 h-0 w-0">
+        <div className="animate-blob-morph absolute h-56 w-56 -translate-x-1/2 -translate-y-[calc(50%+96px)] bg-flame-500 sm:h-72 sm:w-72 sm:-translate-y-[calc(50%+128px)]" />
+      </div>
+      <div aria-hidden="true" className="animate-orbit-2 absolute left-1/2 top-1/2 -z-10 h-0 w-0">
+        <div className="absolute h-44 w-44 -translate-x-1/2 -translate-y-[calc(50%+80px)] rounded-full bg-ink-400 dark:bg-ink-300 sm:h-56 sm:w-56 sm:-translate-y-[calc(50%+104px)]" />
+      </div>
+      <div aria-hidden="true" className="animate-orbit-3 absolute left-1/2 top-1/2 -z-10 h-0 w-0">
+        <div className="absolute h-28 w-28 -translate-x-1/2 -translate-y-[calc(50%+66px)] rounded-3xl bg-emerald-500 sm:h-36 sm:w-36 sm:-translate-y-[calc(50%+86px)]" />
+      </div>
+      <div aria-hidden="true" className="animate-orbit-4 absolute left-1/2 top-1/2 -z-10 h-0 w-0">
+        <div className="absolute h-16 w-16 -translate-x-1/2 -translate-y-[calc(50%+108px)] bg-emerald-300 [clip-path:polygon(50%_0%,0%_100%,100%_100%)] sm:h-20 sm:w-20 sm:-translate-y-[calc(50%+140px)]" />
+      </div>
 
-      {/* Semi-transparent product screenshots — the current one is centered
-          and fully visible, with the previous/next ones peeking out from
-          behind its left and right edges (coverflow style). */}
+      {/* Product screenshots — the current one is centered and fully
+          visible, with the previous/next ones peeking out from behind its
+          left and right edges (coverflow style). Solid card background
+          (not translucent) so it reads clearly over the shapes behind it. */}
       {SCREENS.map((Screen, i) => {
         const diff = (i - index + total) % total
         const isCurrent = diff === 0
@@ -234,7 +244,7 @@ function BookingScreenshot() {
             key={i}
             animate={target}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
-            className="absolute inset-0 m-auto h-[420px] w-full max-w-[300px] overflow-hidden rounded-[32px] border border-border bg-card/70 px-6 pb-6 pt-3 text-center shadow-[var(--shadow-soft-lg)] backdrop-blur-sm"
+            className="absolute inset-0 m-auto h-[360px] w-full max-w-[240px] overflow-hidden rounded-[32px] border border-border bg-card px-6 pb-6 pt-3 text-center shadow-[var(--shadow-soft-lg)] sm:h-[420px] sm:max-w-[300px]"
           >
             <Screen />
           </motion.div>
@@ -321,17 +331,17 @@ export default function LandingPage() {
 
         <div className="relative mx-auto max-w-2xl px-5 pt-6 pb-16 sm:px-6 sm:pt-8 sm:pb-24 lg:pt-6 lg:pb-20">
           <div className="text-center">
-            <motion.h1
+            <MotionHeading
+              level="h1"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              className="[font-family:var(--font-family-display)] text-3xl sm:text-5xl lg:text-5xl font-semibold tracking-tight text-foreground leading-tight"
             >
               Schedule smarter.{' '}
               <span className="bg-gradient-to-r from-flame-500 to-flame-700 bg-clip-text text-transparent">
                 Meet easier.
               </span>
-            </motion.h1>
+            </MotionHeading>
 
             <BookingScreenshot />
 
@@ -349,12 +359,15 @@ export default function LandingPage() {
               </Button>
             </div>
 
-            {/* Mobile-only: single hand below the copy */}
-            <div className="mt-10 flex justify-center lg:hidden">
+            {/* Mobile-only: single hand, bled off the true left edge of the
+                screen — mirrors the desktop treatment (the artwork's wrist
+                already runs off its own canvas) instead of floating
+                centered with a visible cut-off edge in empty space. */}
+            <div className="relative left-1/2 mt-10 w-screen -translate-x-1/2 lg:hidden">
               <img
                 src="/hand-left.png"
                 alt="Illustration of a reaching hand, representing connection between mentors and trainees"
-                className="w-full max-w-[260px] select-none"
+                className="block w-[68vw] max-w-[300px] min-w-[200px] rotate-3 select-none"
                 draggable={false}
               />
             </div>
@@ -365,9 +378,7 @@ export default function LandingPage() {
       <section id="how-it-works" className="py-20 sm:py-32">
         <div className="mx-auto max-w-4xl px-5 sm:px-6">
           <Reveal>
-            <h2 className="text-center text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-              How it works
-            </h2>
+            <Heading level="h2" className="text-center">How it works</Heading>
           </Reveal>
           <Reveal delay={0.12}>
             <p className="mt-3 text-center text-sm sm:text-base text-muted-foreground">
@@ -391,7 +402,7 @@ export default function LandingPage() {
                   <div className="group relative z-10 flex h-40 w-40 flex-col items-center justify-center overflow-hidden rounded-full border-2 border-flame-400 bg-card p-5 text-center shadow-[var(--shadow-soft-md)] transition-all duration-300 hover:border-flame-600 hover:shadow-[var(--shadow-soft-lg)] sm:h-48 sm:w-48">
                     <div
                       aria-hidden="true"
-                      className="absolute inset-x-[-10%] top-full h-[130%] transition-[top] duration-[900ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:top-0"
+                      className="absolute inset-x-[-10%] top-[70%] h-[130%] transition-[top] duration-[900ms] ease-[cubic-bezier(0.65,0,0.35,1)] group-hover:top-0"
                     >
                       <svg
                         className="wave-scroll absolute inset-x-0 -top-3 h-6 w-[200%] text-flame-500"
@@ -426,9 +437,7 @@ export default function LandingPage() {
               <p className="text-xs font-semibold uppercase tracking-wider text-flame-600 dark:text-flame-400">
                 For developers
               </p>
-              <h2 className="mt-3 text-2xl sm:text-3xl font-bold tracking-tight text-foreground">
-                Power Your Platform with iMeet
-              </h2>
+              <Heading level="h2" className="mt-3">Power Your Platform with iMeet</Heading>
               <p className="mt-4 text-sm sm:text-base text-muted-foreground leading-relaxed max-w-md">
                 Looking to offer scheduling in your own product? Our API makes it easy to integrate iMeet into your platform.
               </p>
