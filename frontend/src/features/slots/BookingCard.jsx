@@ -49,7 +49,7 @@ export function BookingCard({ booking, index = 0, onDelete }) {
     >
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
-          <Avatar name={slot.volunteer_name} size="sm" />
+          <Avatar name={slot.volunteer_name} src={slot.volunteer_profile_picture} size="sm" />
           <div className="min-w-0">
             <p className="truncate text-sm font-semibold text-foreground">{formatDate(slot.start_time)}</p>
             <p className="text-xs text-muted-foreground">

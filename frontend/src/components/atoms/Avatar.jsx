@@ -1,6 +1,12 @@
+import { useState } from 'react'
 import { cn } from '@/lib/cn'
 
-/** Avatar — circular image if `src` is given, otherwise the person's initials on a flame background. */
+/**
+ * Avatar — circular image if `src` is given, otherwise the person's
+ * initials on a flame background. `src` is typically the user's Google
+ * account photo; if that URL ever fails to load (revoked, expired,
+ * network hiccup) it falls back to initials instead of a broken-image icon.
+ */
 const sizes = {
   sm: 'h-8 w-8 text-xs',
   md: 'h-11 w-11 text-sm',
@@ -16,6 +22,9 @@ function initials(name) {
 }
 
 export function Avatar({ name, src, size = 'md', className, ring = false }) {
+  const [failed, setFailed] = useState(false)
+  const showImage = src && !failed
+
   return (
     <div
       className={cn(
@@ -25,8 +34,14 @@ export function Avatar({ name, src, size = 'md', className, ring = false }) {
         className,
       )}
     >
-      {src ? (
-        <img src={src} alt={name} className="h-full w-full object-cover" />
+      {showImage ? (
+        <img
+          src={src}
+          alt={name}
+          className="h-full w-full object-cover"
+          referrerPolicy="no-referrer"
+          onError={() => setFailed(true)}
+        />
       ) : (
         <>
           <span aria-hidden="true">{initials(name)}</span>
