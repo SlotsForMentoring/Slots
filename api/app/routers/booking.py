@@ -11,7 +11,7 @@ from app.models.user import User
 from app.models.booking import Booking
 from app.models.slots import Slot
 from app.schemas.booking import BookingCreate, BookingResponse
-from app.services.booking import book_slot, create_meeting_and_store
+from app.services.booking import book_slot, create_meeting_and_store, cancel_meeting
 from app.crud.booking import delete_booking
 
 router = APIRouter(prefix="/bookings", tags=["bookings"])
@@ -50,15 +50,22 @@ async def create_booking(
 @router.delete("/{booking_id}", status_code=204)
 async def cancel_booking(
     booking_id: UUID,
-    user: User = Depends(require_role("trainee")),
+    background_tasks: BackgroundTasks,
+    user: User = Depends(get_current_user),
     session: AsyncSession = Depends(get_db),
 ):
-    result = await delete_booking(session, booking_id, user.id)
+    result = await delete_booking(session, booking_id, user)
 
-    if result == "not_found":
+    if result.status == "not_found":
         raise HTTPException(status_code=404, detail="Booking not found")
-    if result == "not_yours":
+    if result.status == "forbidden":
         raise HTTPException(status_code=403, detail="You can only cancel your own bookings")
+
+    background_tasks.add_task(
+        cancel_meeting,
+        refresh_token=result.volunteer_refresh_token,
+        event_id=result.event_id,
+    )
 
 
 @router.get("/mine", response_model=list[BookingResponse])

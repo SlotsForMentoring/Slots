@@ -1,5 +1,6 @@
 import logging
 import uuid
+from dataclasses import dataclass
 from datetime import datetime
 
 import httpx
@@ -12,6 +13,15 @@ GOOGLE_TOKEN_URL = "https://oauth2.googleapis.com/token"
 GOOGLE_CALENDAR_EVENTS_URL = "https://www.googleapis.com/calendar/v3/calendars/primary/events"
 
 RATE_LIMIT_REASONS = {"rateLimitExceeded", "userRateLimitExceeded", "quotaExceeded"}
+
+
+@dataclass
+class PairingEvent:
+    """The bits of a created Calendar event other layers need to persist:
+    the Meet link to show the user, and the event_id so it can later be
+    cancelled (see cancel_pairing_event)."""
+    event_id: str
+    meet_link: str | None
 
 
 async def get_access_token(refresh_token: str) -> str | None:
@@ -48,12 +58,13 @@ async def create_calendar_event(
     trainee_email: str,
     start_time: datetime,
     end_time: datetime,
-) -> str | None:
+) -> PairingEvent | None:
     """Create a Calendar event with a Google Meet link.
 
-    Returns the Meet link URL on success, or None if Google rejects the
-    request (revoked token, rate limit, etc.) - the caller is never meant
-    to crash because a calendar invite could not be created.
+    Returns a PairingEvent (event_id + Meet link URL) on success, or None
+    if Google rejects the request (revoked token, rate limit, etc.) - the
+    caller is never meant to crash because a calendar invite could not be
+    created.
     """
     body = {
         "summary": f"Pair Scheduling: {volunteer_name} + {trainee_name}",
@@ -93,7 +104,42 @@ async def create_calendar_event(
         logger.warning("Failed to create Google Calendar event: %s", response.text)
         return None
 
-    return _extract_meet_link(response.json())
+    event = response.json()
+    return PairingEvent(event_id=event["id"], meet_link=_extract_meet_link(event))
+
+
+async def delete_calendar_event(access_token: str, event_id: str) -> None:
+    """Cancel a previously-created Calendar event, notifying attendees.
+
+    `sendUpdates=all` is what makes this show up as a "This event has been
+    cancelled" email to both the volunteer and trainee - the same
+    mechanism Google already uses to send the original invite. Never
+    raises: a cancelled booking must never surface an error to the user
+    just because the calendar side-effect failed.
+    """
+    async with httpx.AsyncClient() as client:
+        response = await client.delete(
+            f"{GOOGLE_CALENDAR_EVENTS_URL}/{event_id}",
+            params={"sendUpdates": "all"},
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+
+    if response.status_code in (404, 410):
+        # Already deleted/gone (e.g. the volunteer removed it by hand) - fine.
+        return
+
+    if response.status_code in (401, 403) and _error_code(response) not in RATE_LIMIT_REASONS:
+        logger.warning("Google rejected the access_token when cancelling the calendar event (revoked?)")
+        return
+
+    if response.status_code == 429 or _error_code(response) in RATE_LIMIT_REASONS:
+        logger.warning("Hit Google Calendar API rate limit while cancelling; not retrying")
+        return
+
+    try:
+        response.raise_for_status()
+    except httpx.HTTPStatusError:
+        logger.warning("Failed to cancel Google Calendar event %s: %s", event_id, response.text)
 
 
 async def create_pairing_event(
@@ -104,7 +150,7 @@ async def create_pairing_event(
     trainee_email: str,
     start_time: datetime,
     end_time: datetime,
-) -> str | None:
+) -> PairingEvent | None:
     """Create the Calendar event + Meet link for a pair-scheduling booking.
 
     This is the entry point other layers (e.g. the booking service) should
@@ -113,6 +159,7 @@ async def create_pairing_event(
     results in None so a calendar hiccup never blocks a booking.
     """
     if not refresh_token:
+        logger.info("Skipping calendar event creation: volunteer has no stored google_refresh_token")
         return None
 
     try:
@@ -137,6 +184,37 @@ async def create_pairing_event(
     except httpx.HTTPError as exc:
         logger.warning("Failed to create Google Calendar event: %s", exc)
         return None
+
+
+async def cancel_pairing_event(refresh_token: str | None, event_id: str | None) -> None:
+    """Cancel the Calendar event for a booking that's being cancelled.
+
+    Mirrors create_pairing_event's resilience: missing refresh_token,
+    missing event_id (the booking may predate this field, or the original
+    calendar call may have failed), a revoked token, or any Google/network
+    error all just log and return - a booking cancellation must never fail
+    because the calendar side-effect couldn't complete.
+    """
+    if not refresh_token or not event_id:
+        logger.info(
+            "Skipping calendar cancellation: %s missing",
+            "refresh_token" if not refresh_token else "event_id",
+        )
+        return
+
+    try:
+        access_token = await get_access_token(refresh_token)
+    except httpx.HTTPError as exc:
+        logger.warning("Failed to refresh Google access_token: %s", exc)
+        return
+
+    if access_token is None:
+        return
+
+    try:
+        await delete_calendar_event(access_token=access_token, event_id=event_id)
+    except httpx.HTTPError as exc:
+        logger.warning("Failed to cancel Google Calendar event %s: %s", event_id, exc)
 
 
 def _error_code(response: httpx.Response) -> str | None:

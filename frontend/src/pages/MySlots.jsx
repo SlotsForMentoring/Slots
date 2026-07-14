@@ -9,7 +9,7 @@ import { CalendarGrid } from '@/features/calendar/CalendarGrid'
 import { SlotCreateModal } from '@/features/calendar/SlotCreateModal'
 
 export default function MySlots() {
-  const { slots, state, reload, addSlot, removeSlot } = useMySlots()
+  const { slots, state, reload, addSlot, removeSlot, cancelSlotBooking } = useMySlots()
   const [selectedDate, setSelectedDate] = useState(null)
   const [modalDate, setModalDate] = useState(null)
   const [filter, setFilter] = useState('all')
@@ -102,7 +102,7 @@ export default function MySlots() {
         {state === 'success' && filtered.length > 0 && (
           <motion.div layout className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filtered.map((slot, i) => (
-              <MySlotCard key={slot.id} slot={slot} index={i} onDelete={removeSlot} />
+              <MySlotCard key={slot.id} slot={slot} index={i} onDelete={removeSlot} onCancelBooking={cancelSlotBooking} />
             ))}
           </motion.div>
         )}
