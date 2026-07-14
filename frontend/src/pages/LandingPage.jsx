@@ -209,21 +209,46 @@ function BookingScreenshot() {
           a constant speed, and each shape sits at a fixed distance from
           it, so it sweeps in a perfect circle instead of drifting around.
           Four different speeds/directions so they read as independent
-          hands, not one thing spinning. Plain CSS keyframe animation (see
-          index.css) so it always runs, and backs off automatically for
-          prefers-reduced-motion. */}
-      <div aria-hidden="true" className="animate-orbit-1 absolute left-1/2 top-1/2 -z-10 h-0 w-0">
+          hands, not one thing spinning (CSS keyframes, see index.css, so
+          it always runs and backs off for prefers-reduced-motion). Each
+          hand also fades in one after another on mount (staggered delay),
+          rather than all four just appearing at once. */}
+      <motion.div
+        aria-hidden="true"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.1, delay: 0, ease: 'easeOut' }}
+        className="animate-orbit-1 absolute left-1/2 top-1/2 -z-10 h-0 w-0"
+      >
         <div className="animate-blob-morph absolute h-56 w-56 -translate-x-1/2 -translate-y-[calc(50%+96px)] bg-flame-500 sm:h-72 sm:w-72 sm:-translate-y-[calc(50%+128px)]" />
-      </div>
-      <div aria-hidden="true" className="animate-orbit-2 absolute left-1/2 top-1/2 -z-10 h-0 w-0">
+      </motion.div>
+      <motion.div
+        aria-hidden="true"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.1, delay: 0.25, ease: 'easeOut' }}
+        className="animate-orbit-2 absolute left-1/2 top-1/2 -z-10 h-0 w-0"
+      >
         <div className="absolute h-44 w-44 -translate-x-1/2 -translate-y-[calc(50%+80px)] rounded-full bg-ink-400 dark:bg-ink-300 sm:h-56 sm:w-56 sm:-translate-y-[calc(50%+104px)]" />
-      </div>
-      <div aria-hidden="true" className="animate-orbit-3 absolute left-1/2 top-1/2 -z-10 h-0 w-0">
+      </motion.div>
+      <motion.div
+        aria-hidden="true"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.1, delay: 0.5, ease: 'easeOut' }}
+        className="animate-orbit-3 absolute left-1/2 top-1/2 -z-10 h-0 w-0"
+      >
         <div className="absolute h-28 w-28 -translate-x-1/2 -translate-y-[calc(50%+66px)] rounded-3xl bg-emerald-500 sm:h-36 sm:w-36 sm:-translate-y-[calc(50%+86px)]" />
-      </div>
-      <div aria-hidden="true" className="animate-orbit-4 absolute left-1/2 top-1/2 -z-10 h-0 w-0">
+      </motion.div>
+      <motion.div
+        aria-hidden="true"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.1, delay: 0.75, ease: 'easeOut' }}
+        className="animate-orbit-4 absolute left-1/2 top-1/2 -z-10 h-0 w-0"
+      >
         <div className="absolute h-16 w-16 -translate-x-1/2 -translate-y-[calc(50%+108px)] bg-emerald-300 [clip-path:polygon(50%_0%,0%_100%,100%_100%)] sm:h-20 sm:w-20 sm:-translate-y-[calc(50%+140px)]" />
-      </div>
+      </motion.div>
 
       {/* Product screenshots — the current one is centered and fully
           visible, with the previous/next ones peeking out from behind its
@@ -311,19 +336,29 @@ export default function LandingPage() {
           <div className="relative left-1/2 w-[36rem] sm:w-[72rem] -translate-x-1/2 rotate-[30deg] aspect-[1155/678] bg-gradient-to-tr from-flame-400 to-flame-200 opacity-20" />
         </div>
 
-        {/* ── Left hand — flush with the screen edge, lower, reaching up-right ── */}
-        <img
+        {/* ── Left hand — flush with the screen edge, lower, reaching up-right.
+             Slides in from off-screen and fades in on page load, rather
+             than just being there instantly. ── */}
+        <motion.img
           src="/hand-left.png"
           alt=""
+          initial={{ opacity: 0, x: -80 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
           className="pointer-events-none absolute bottom-0 left-0 hidden w-[26vw] max-w-[420px] min-w-[260px] rotate-3 select-none lg:block"
           aria-hidden="true"
           draggable={false}
         />
 
-        {/* ── Right hand — flush with the screen edge, higher, reaching down-left ── */}
-        <img
+        {/* ── Right hand — flush with the screen edge, higher, reaching down-left.
+             Same entrance, mirrored, slightly later so the two don't slide
+             in in perfect lockstep. ── */}
+        <motion.img
           src="/hand-right.png"
           alt=""
+          initial={{ opacity: 0, x: 80 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.9, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
           className="pointer-events-none absolute right-0 top-8 hidden w-[26vw] max-w-[420px] min-w-[260px] -rotate-3 select-none lg:block"
           aria-hidden="true"
           draggable={false}
@@ -364,9 +399,12 @@ export default function LandingPage() {
                 already runs off its own canvas) instead of floating
                 centered with a visible cut-off edge in empty space. */}
             <div className="relative left-1/2 mt-10 w-screen -translate-x-1/2 lg:hidden">
-              <img
+              <motion.img
                 src="/hand-left.png"
                 alt="Illustration of a reaching hand, representing connection between mentors and trainees"
+                initial={{ opacity: 0, x: -60 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
                 className="block w-[68vw] max-w-[300px] min-w-[200px] rotate-3 select-none"
                 draggable={false}
               />
