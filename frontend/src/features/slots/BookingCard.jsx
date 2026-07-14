@@ -1,7 +1,5 @@
-import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Avatar, Badge, Button, Card } from '@/components/atoms'
-import { api } from '@/services/api'
+import { Avatar, Badge, Card } from '@/components/atoms'
 import { cn } from '@/lib/cn'
 import { formatDate, formatTime } from '@/lib/dateUtils'
 
@@ -11,29 +9,10 @@ function isPast(iso) {
   return new Date(iso) < new Date()
 }
 
-/** BookingCard — a trainee's own booking, shown on the My Bookings page (upcoming or past). A cancel/delete flow is only offered for upcoming bookings. */
-export function BookingCard({ booking, index = 0, onDelete }) {
+/** BookingCard — a trainee's own booking, shown on the My Bookings page (upcoming or past). */
+export function BookingCard({ booking, index = 0 }) {
   const { slot, agenda, status } = booking
   const past = isPast(slot.end_time)
-  const [confirm, setConfirm] = useState(false)
-  const [deleting, setDeleting] = useState(false)
-  const [deleteError, setDeleteError] = useState(null)
-
-  const handleDelete = async () => {
-    setDeleting(true)
-    setDeleteError(null)
-    try {
-      await api.deleteBooking(booking.id)
-      onDelete(booking.id)
-    } catch (e) {
-      const msg = e?.message || ''
-      if (msg.includes('403')) setDeleteError('You can only cancel your own bookings.')
-      else setDeleteError('Could not cancel booking. Please try again.')
-      setConfirm(false)
-    } finally {
-      setDeleting(false)
-    }
-  }
 
   return (
     <MotionCard
@@ -76,31 +55,6 @@ export function BookingCard({ booking, index = 0, onDelete }) {
           </p>
         )}
       </div>
-
-      {!past && (
-        <div className="mt-auto">
-          {!confirm ? (
-            <Button variant="destructive" size="sm" className="w-full" onClick={() => setConfirm(true)}>
-              Cancel booking
-            </Button>
-          ) : (
-            <div className="flex flex-col gap-2">
-              <p className="text-xs text-muted-foreground text-center">Cancel this booking?</p>
-              <div className="flex gap-2">
-                <Button variant="secondary" size="sm" className="flex-1" onClick={() => setConfirm(false)} disabled={deleting}>
-                  Keep it
-                </Button>
-                <Button variant="destructive" size="sm" className="flex-1" loading={deleting} onClick={handleDelete}>
-                  Confirm
-                </Button>
-              </div>
-            </div>
-          )}
-          {deleteError && (
-            <p className="mt-2 text-xs text-destructive font-medium">{deleteError}</p>
-          )}
-        </div>
-      )}
     </MotionCard>
   )
 }
