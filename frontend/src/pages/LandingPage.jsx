@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { Calendar, Check, Clock, Share2 } from 'lucide-react'
 import { useAuthStore, GREETED_KEY } from '@/stores/authStore'
 import { Avatar, Button, Heading, Logo } from '@/components/atoms'
+import { cn } from '@/lib/cn'
 
 // Placeholder photo for the hero's product-preview mockups (they show a
 // fictional "Sarah Kim", not a real user, so a generated placeholder photo
@@ -184,7 +185,7 @@ function Reveal({ children, delay = 0, className }) {
 
 const SCREENS = [BookingConfirmedMockup, SlotCardMockup, UpcomingBookingMockup]
 
-function BookingScreenshot() {
+function BookingScreenshot({ className }) {
   const [index, setIndex] = useState(0)
   // Peek amount for the side cards shrinks on narrow phones so they don't
   // clip against the screen edge (they're only fully visible ~375px+).
@@ -204,7 +205,7 @@ function BookingScreenshot() {
   const total = SCREENS.length
 
   return (
-    <div className="isolate relative mx-auto my-10 h-[360px] w-full max-w-[360px] sm:my-12 sm:h-[420px] sm:max-w-[420px]">
+    <div className={cn('isolate relative mx-auto my-10 h-[360px] w-full max-w-[360px] sm:my-12 sm:h-[420px] sm:max-w-[420px]', className)}>
       {/* Four crisp, solid-filled shapes orbiting the screenshot's center
           like watch hands — a zero-size "pivot" at dead center rotates at
           a constant speed, and each shape sits at a fixed distance from
@@ -366,12 +367,19 @@ export default function LandingPage() {
         />
 
         <div className="relative mx-auto max-w-2xl px-5 pt-6 pb-16 sm:px-6 sm:pt-8 sm:pb-24 lg:pt-6 lg:pb-20">
-          <div className="text-center">
+          {/* flex + order below so mobile can show a different stacking
+              order (title, buttons, right hand, cards, left hand - cards
+              sandwiched between the two hands) while lg: keeps the
+              original order (title, cards, buttons) unchanged - the
+              desktop hands are absolutely positioned overlays anyway, so
+              this reordering never touches them. */}
+          <div className="flex flex-col text-center">
             <MotionHeading
               level="h1"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              className="order-1"
             >
               Schedule smarter.{' '}
               <span className="bg-gradient-to-r from-flame-500 to-flame-700 bg-clip-text text-transparent">
@@ -379,9 +387,9 @@ export default function LandingPage() {
               </span>
             </MotionHeading>
 
-            <BookingScreenshot />
+            <BookingScreenshot className="order-4 lg:order-2" />
 
-            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+            <div className="order-2 mt-8 flex flex-col sm:mt-10 sm:flex-row items-center justify-center gap-3 sm:gap-4 lg:order-3">
               <Button size="lg" fullWidth={false} className="w-full sm:w-auto" onClick={getStarted}>
                 Get started — it's free
               </Button>
@@ -395,11 +403,27 @@ export default function LandingPage() {
               </Button>
             </div>
 
-            {/* Mobile-only: single hand, bled off the true left edge of the
+            {/* Mobile-only: right hand, bled off the true right edge,
+                sitting between the CTA buttons and the card carousel so
+                the cards end up sandwiched between the two hands. */}
+            <div className="order-3 relative left-1/2 mt-10 w-screen -translate-x-1/2 lg:hidden">
+              <motion.img
+                src="/hand-right.png"
+                alt=""
+                aria-hidden="true"
+                initial={{ opacity: 0, x: 60 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                className="ml-auto block w-[68vw] max-w-[300px] min-w-[200px] -rotate-3 select-none"
+                draggable={false}
+              />
+            </div>
+
+            {/* Mobile-only: left hand, bled off the true left edge of the
                 screen — mirrors the desktop treatment (the artwork's wrist
                 already runs off its own canvas) instead of floating
                 centered with a visible cut-off edge in empty space. */}
-            <div className="relative left-1/2 mt-10 w-screen -translate-x-1/2 lg:hidden">
+            <div className="order-5 relative left-1/2 mt-10 w-screen -translate-x-1/2 lg:hidden">
               <motion.img
                 src="/hand-left.png"
                 alt="Illustration of a reaching hand, representing connection between mentors and trainees"
