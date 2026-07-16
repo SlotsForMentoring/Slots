@@ -1,10 +1,20 @@
+from dataclasses import dataclass
 from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.config import settings
+from app.models.booking import Booking
+from app.models.slots import Slot
 from app.models.user import User
+
+
+@dataclass
+class CalendarCancel:
+    event_id: str | None
+    refresh_token: str | None
 
 
 async def get_all_users(
@@ -31,6 +41,46 @@ async def update_user_role(
     await session.commit()
     await session.refresh(user)
     return user
+
+
+async def reset_user_data(
+    session: AsyncSession,
+    user_id: UUID,
+    old_role: str,
+) -> list[CalendarCancel]:
+    cancels: list[CalendarCancel] = []
+
+    if old_role == "trainee":
+        result = await session.execute(
+            select(Booking)
+            .where(Booking.trainee_id == user_id)
+            .options(selectinload(Booking.slot).selectinload(Slot.volunteer))
+        )
+        bookings = list(result.scalars().all())
+        for booking in bookings:
+            cancels.append(CalendarCancel(
+                event_id=booking.event_id,
+                refresh_token=booking.slot.volunteer.google_refresh_token,
+            ))
+            await session.delete(booking)
+
+    elif old_role == "volunteer":
+        result = await session.execute(
+            select(Slot)
+            .where(Slot.volunteer_id == user_id)
+            .options(selectinload(Slot.booking), selectinload(Slot.volunteer))
+        )
+        slots = list(result.scalars().all())
+        for slot in slots:
+            if slot.booking:
+                cancels.append(CalendarCancel(
+                    event_id=slot.booking.event_id,
+                    refresh_token=slot.volunteer.google_refresh_token,
+                ))
+            await session.delete(slot)
+
+    await session.flush()
+    return cancels
 
 
 async def get_user_by_google_id(session: AsyncSession, google_id: str) -> User | None:
