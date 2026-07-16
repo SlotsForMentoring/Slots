@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { useCallback, useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import { useAuthStore } from './stores/authStore'
 import { api } from './services/api'
+import { usePolling } from '@/hooks/usePolling'
 
 import RootLayout     from '@/components/layouts/RootLayout'
 import ProtectedRoute from '@/components/guards/ProtectedRoute'
@@ -21,12 +22,32 @@ function AppRoutes() {
   const user      = useAuthStore((s) => s.user)
   const [loading, setLoading] = useState(true)
 
+  const navigate = useNavigate()
+
   useEffect(() => {
     api.getMe()
       .then((data) => setUser(data))
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [setUser])
+
+  const refreshMe = useCallback(() => {
+    if (!user) return
+    api.getMe()
+      .then((data) => {
+        const oldRole = useAuthStore.getState().user?.role
+        setUser(data)
+        if (oldRole && data.role !== oldRole) {
+          const dest = data.role === 'admin' ? '/admin/users'
+                     : data.role === 'volunteer' ? '/my-slots'
+                     : '/slots'
+          navigate(dest, { replace: true })
+        }
+      })
+      .catch(() => {})
+  }, [user, setUser, navigate])
+
+  usePolling(refreshMe)
 
   if (loading) {
     return (
