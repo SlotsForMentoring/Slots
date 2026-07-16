@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '@/services/api'
+import { usePolling } from '@/hooks/usePolling'
 
 /**
  * useMyBookings — fetches the signed-in trainee's bookings.
@@ -33,6 +34,8 @@ export function useMyBookings() {
   const removeBooking = useCallback((id) => {
     setBookings((prev) => prev.filter((b) => b.id !== id))
   }, [])
+
+  usePolling(fetchBookings)
 
   return { bookings, state, reload, removeBooking }
 }

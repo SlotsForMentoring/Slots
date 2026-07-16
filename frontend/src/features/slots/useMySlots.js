@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '@/services/api'
+import { usePolling } from '@/hooks/usePolling'
 
 /** useMySlots — a volunteer mentor's own slots (available + booked), for the "My Slots" page. */
 export function useMySlots() {
@@ -41,6 +42,8 @@ export function useMySlots() {
       prev.map((s) => (s.id === slotId ? { ...s, is_booked: false, booking: null } : s)),
     )
   }, [])
+
+  usePolling(fetchSlots)
 
   return { slots, state, reload, addSlot, removeSlot, cancelSlotBooking }
 }

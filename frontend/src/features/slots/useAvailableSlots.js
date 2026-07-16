@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '@/services/api'
+import { usePolling } from '@/hooks/usePolling'
 
 /** useAvailableSlots — every bookable slot for the trainee "Browse Slots" page, with local optimistic removal once booked. */
 export function useAvailableSlots() {
@@ -28,6 +29,8 @@ export function useAvailableSlots() {
   const removeSlot = useCallback((id) => {
     setSlots((prev) => prev.filter((s) => s.id !== id))
   }, [])
+
+  usePolling(fetchSlots)
 
   return { slots, state, reload, removeSlot }
 }
