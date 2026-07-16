@@ -1,148 +1,101 @@
-# Frontend Architecture — Atomic Design
+# iMeet Frontend
 
-Directory structure:
+The web interface for the iMeet scheduling platform. Built with React and styled with Tailwind CSS.
 
-slots/src/
-├── components/
-│ ├── atoms/ ← reusable base elements (Button, Input, Badge)
-│ ├── molecules/ ← combine atoms, single responsibility (SlotCard, UserRow)
-│ └── organisms/ ← full UI sections (Navbar, SlotList, SlotForm)
-├── pages/ ← one per route, assembles organisms
-├── layouts/ ← page wrappers (navbar + content area)
-├── context/ ← React context (auth)
-├── services/ ← API client
-└── mocks/ ← mock data for development
+## Tech Stack
 
-## Core Principle
+- **React 19** with functional components and hooks
+- **Vite 8** for fast development and builds
+- **Tailwind CSS 4** for styling
+- **Zustand** for state management
+- **React Router 7** for navigation
+- **Framer Motion** for animations
+- **Lucide React** for icons
 
-UI is built from smallest to largest units:
+## Setup
 
-Atom → Molecule → Organism → Page
+```bash
+cd frontend
+npm install
+cp .env.example .env
+```
 
-Atom: could be used in any project (Button, Input, Avatar)
-Molecule: combines atoms, one function (SlotCard, BookingCard)
-Organism: entire section of a page (Navbar, SlotList with filters)
-Page: what the user sees at a route
+Set the API URL in `.env`:
 
-Each level has strict responsibilities.
+```bash
+# Local development (backend running on port 8000)
+VITE_API_URL=http://localhost:8000
 
----
+# Production (Netlify proxy)
+VITE_API_URL=/api
+```
 
-## Atoms
+## Run
 
-**Definition:**
-Smallest reusable UI elements. No business logic.
+```bash
+npm run dev
+```
 
-**Rules:**
+The app runs at `http://localhost:5173`.
 
-- Must be reusable across ANY project
-- No API calls
-- No page awareness
+## Build
 
-**Examples:**
-
-- Button
-- Input
-- Badge
-- Avatar
-- Icon
-
----
-
-## Molecules
-
-**Definition:**
-Combination of atoms that serve a single UI function.
-
-**Rules:**
-
-- Combines multiple atoms
-- Contains minimal logic (presentation only)
-- Represents a reusable UI pattern
-
-**Examples:**
-
-- SlotCard (Button + text + badge)
-- UserRow (Avatar + name + role)
-- BookingCard
-
----
-
-## Organisms
-
-**Definition:**
-Full sections of a page composed of molecules and atoms.
-
-**Rules:**
-
-- Can contain API calls OR receive data via props
-- Represents functional UI blocks
-- Not reusable across unrelated pages
-
-**Examples:**
-
-- Navbar
-- SlotList (with filters + list)
-- SlotForm
-- AdminUserTable
-
----
+```bash
+npm run build
+npm run preview    # preview the production build
+```
 
 ## Pages
 
-**Definition:**
-Route-level components that assemble organisms into a full screen.
+| Path | Role | Page |
+|------|------|------|
+| `/` | public | Landing page |
+| `/login` | public | Login with Google |
+| `/slots` | trainee | Browse and book available slots |
+| `/bookings` | trainee | View my bookings |
+| `/home` | trainee | Home dashboard |
+| `/my-slots` | volunteer | Manage my time slots |
+| `/admin/users` | admin | Manage user roles |
+| `/privacy` | public | Privacy policy |
+| `/terms` | public | Terms of service |
 
-**Rules:**
+## Architecture
 
-- One page per route
-- Handles data orchestration
-- Connects to services/context
-- No low-level UI logic
+The frontend uses **Atomic Design** to organize components:
 
-**Examples:**
+```
+src/
+├── components/
+│   ├── atoms/          # Small, reusable elements (Button, Badge, Card, Avatar)
+│   ├── molecules/      # Combinations of atoms (BottomSheet, SearchBar, EmptyState)
+│   ├── organisms/      # Full UI sections (Navbar, ConsentBanner)
+│   ├── guards/         # Route protection (ProtectedRoute)
+│   └── layouts/        # Page wrappers (RootLayout)
+├── features/           # Feature-specific components
+│   ├── calendar/       # Calendar grid, slot creation modal
+│   └── slots/          # Slot cards, booking cards, data hooks
+├── pages/              # One component per route
+├── services/           # API client (all fetch calls in one place)
+├── stores/             # Zustand stores (auth state)
+├── lib/                # Utility functions (dates, classnames)
+└── mocks/              # Mock data for development
+```
 
-- AvailableSlotsPage
-- MySlotsPage
-- MyBookingsPage
-- AdminUsersPage
+### Rules
 
----
+- **Atoms** — No business logic, no API calls. Reusable in any project
+- **Molecules** — Combine atoms, minimal logic, presentation only
+- **Organisms** — Full page sections, can fetch data or receive it as props
+- **Pages** — One per route, connect data to organisms
 
-## Data Flow Rule
+### Data Flow
 
-Pages → fetch data → pass to Organisms → Organisms compose Molecules → Molecules compose Atoms
+```
+Pages → fetch data → pass to Organisms → Organisms use Molecules → Molecules use Atoms
+```
 
-NO API calls inside atoms or molecules.
+No API calls inside atoms or molecules.
 
----
+## Deploy
 
-## Anti-patterns
-
-- NOT Atom calling API
-- NOT Molecule managing routing
-- NOT Page containing raw HTML UI blocks
-- NOT Business logic inside atoms
-
----
-
-## Folder Ownership Rule
-
-Each component folder contains:
-
-- index.jsx (entry)
-- component.jsx (logic)
-- styles.css (optional)
-
----
-
-## Contract Alignment
-
-All components must strictly respect:
-`contracts/*.md`
-
-No deviation in field names or structure is allowed.
-
----
-
-End of architecture document.
+The frontend is deployed on **Netlify**. The `netlify.toml` file proxies `/api/*` requests to the backend on Railway, so the frontend and API share the same domain in production.
