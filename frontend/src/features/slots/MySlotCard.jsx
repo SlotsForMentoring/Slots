@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { Avatar, Badge, Button, Card } from '@/components/atoms'
 import { api } from '@/services/api'
 import { formatDate, formatTime } from '@/lib/dateUtils'
+import { useToastStore } from '@/stores/toastStore'
 
 const MotionCard = motion(Card)
 
@@ -16,6 +17,7 @@ export function MySlotCard({ slot, index = 0, onDelete, onCancelBooking }) {
   const [confirm, setConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState(null)
+  const addToast = useToastStore((s) => s.addToast)
 
   const handleDelete = async () => {
     setDeleting(true)
@@ -23,11 +25,15 @@ export function MySlotCard({ slot, index = 0, onDelete, onCancelBooking }) {
     try {
       await api.deleteSlot(slot.id)
       onDelete(slot.id)
+      addToast('Slot deleted')
     } catch (e) {
       const msg = e?.message || ''
-      if (msg.includes('409')) setDeleteError('Slot is already booked and cannot be deleted.')
-      else if (msg.includes('403')) setDeleteError('You can only delete your own slots.')
-      else setDeleteError('Could not delete slot. Please try again.')
+      let errorMsg
+      if (msg.includes('409')) errorMsg = 'Slot is already booked and cannot be deleted.'
+      else if (msg.includes('403')) errorMsg = 'You can only delete your own slots.'
+      else errorMsg = 'Could not delete slot. Please try again.'
+      setDeleteError(errorMsg)
+      addToast(errorMsg, 'error')
       setConfirm(false)
     } finally {
       setDeleting(false)
@@ -40,10 +46,14 @@ export function MySlotCard({ slot, index = 0, onDelete, onCancelBooking }) {
     try {
       await api.deleteBooking(slot.booking.id)
       onCancelBooking(slot.id)
+      addToast('Booking cancelled')
     } catch (e) {
       const msg = e?.message || ''
-      if (msg.includes('403')) setDeleteError('You can only cancel bookings on your own slots.')
-      else setDeleteError('Could not cancel booking. Please try again.')
+      let errorMsg
+      if (msg.includes('403')) errorMsg = 'You can only cancel bookings on your own slots.'
+      else errorMsg = 'Could not cancel booking. Please try again.'
+      setDeleteError(errorMsg)
+      addToast(errorMsg, 'error')
       setConfirm(false)
     } finally {
       setDeleting(false)
