@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import Navbar from '@/components/organisms/Navbar'
 import { ConsentBanner } from '@/components/organisms/ConsentBanner'
+import { ToastContainer } from '@/components/molecules'
 
 /** RootLayout — the app shell every route renders inside: navbar on top, routed page below, consent banner floating over everything. */
 export default function RootLayout() {
@@ -11,6 +12,7 @@ export default function RootLayout() {
         <Outlet />
       </main>
       <ConsentBanner />
+      <ToastContainer />
     </div>
   )
 }
