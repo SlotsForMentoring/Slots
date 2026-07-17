@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
+import { Sun, Moon } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
+import { useThemeStore } from '@/stores/themeStore'
 import { api } from '@/services/api'
 import { Logo, Button, RoleBadge } from '@/components/atoms'
 import { cn } from '@/lib/cn'
@@ -40,6 +42,7 @@ export default function Navbar() {
   const clearUser = useAuthStore((s) => s.clearUser)
   const navigate  = useNavigate()
   const [open, setOpen] = useState(false)
+  const { dark, toggle: toggleTheme } = useThemeStore()
 
   const links = user ? (NAV_LINKS[user.role] ?? []) : []
 
@@ -68,6 +71,13 @@ export default function Navbar() {
         )}
 
         <div className="hidden sm:flex items-center gap-3">
+          <button
+            onClick={toggleTheme}
+            aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="flex items-center justify-center w-8 h-8 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          >
+            {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
           {user ? (
             <>
               <div className="flex items-center gap-2">
@@ -146,6 +156,14 @@ export default function Navbar() {
               ))}
             </ul>
           )}
+          <button
+            onClick={toggleTheme}
+            aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+            className="flex w-full items-center gap-2 px-3 py-2.5 text-sm font-medium rounded-lg text-foreground hover:bg-muted transition-colors"
+          >
+            {dark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {dark ? 'Light mode' : 'Dark mode'}
+          </button>
           {user ? (
             <Button variant="ghost" size="sm" fullWidth onClick={handleLogout}>
               Logout
