@@ -55,8 +55,11 @@ async def client():
 
 
 @pytest.mark.asyncio
+@patch("app.crud.users.reset_user_data", new_callable=AsyncMock, return_value=[])
 @patch("app.crud.users.update_user_role", new_callable=AsyncMock)
-async def test_admin_can_update_role(mock_update, client):
+@patch("app.crud.users.get_user_by_id", new_callable=AsyncMock)
+async def test_admin_can_update_role(mock_get, mock_update, mock_reset, client):
+    mock_get.return_value = TARGET_USER
     mock_update.return_value = TARGET_USER
     app.dependency_overrides[get_current_user] = fake_admin
     response = await client.patch(
@@ -78,9 +81,8 @@ async def test_trainee_cannot_update_role(client):
 
 
 @pytest.mark.asyncio
-@patch("app.crud.users.update_user_role", new_callable=AsyncMock)
-async def test_returns_404_when_user_not_found(mock_update, client):
-    mock_update.return_value = None
+@patch("app.crud.users.get_user_by_id", new_callable=AsyncMock, return_value=None)
+async def test_returns_404_when_user_not_found(mock_get, client):
     app.dependency_overrides[get_current_user] = fake_admin
     response = await client.patch(
         "/admin/users/00000000-0000-0000-0000-999999999999/role",
@@ -98,3 +100,53 @@ async def test_rejects_invalid_role(client):
         json={"role": "superadmin"},
     )
     assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+@patch("app.crud.users.reset_user_data", new_callable=AsyncMock, return_value=[])
+@patch("app.crud.users.update_user_role", new_callable=AsyncMock)
+@patch("app.crud.users.get_user_by_id", new_callable=AsyncMock)
+async def test_role_change_triggers_data_reset(mock_get, mock_update, mock_reset, client):
+    trainee = User(
+        id="00000000-0000-0000-0000-000000000020",
+        google_id="g2",
+        email="trainee@example.com",
+        name="Trainee",
+        role="trainee",
+        created_at=NOW,
+        updated_at=NOW,
+    )
+    mock_get.return_value = trainee
+    updated = User(
+        id=trainee.id,
+        google_id=trainee.google_id,
+        email=trainee.email,
+        name=trainee.name,
+        role="volunteer",
+        created_at=NOW,
+        updated_at=NOW,
+    )
+    mock_update.return_value = updated
+    app.dependency_overrides[get_current_user] = fake_admin
+    response = await client.patch(
+        f"/admin/users/{trainee.id}/role",
+        json={"role": "volunteer"},
+    )
+    assert response.status_code == 200
+    mock_reset.assert_called_once()
+
+
+@pytest.mark.asyncio
+@patch("app.crud.users.reset_user_data", new_callable=AsyncMock, return_value=[])
+@patch("app.crud.users.update_user_role", new_callable=AsyncMock)
+@patch("app.crud.users.get_user_by_id", new_callable=AsyncMock)
+async def test_same_role_skips_data_reset(mock_get, mock_update, mock_reset, client):
+    mock_get.return_value = TARGET_USER
+    mock_update.return_value = TARGET_USER
+    app.dependency_overrides[get_current_user] = fake_admin
+    response = await client.patch(
+        f"/admin/users/{TARGET_USER.id}/role",
+        json={"role": "volunteer"},
+    )
+    assert response.status_code == 200
+    mock_reset.assert_not_called()
