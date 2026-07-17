@@ -5,6 +5,7 @@ import { Button } from '@/components/atoms'
 import { BottomSheet } from '@/components/molecules'
 import { formatDate } from '@/lib/dateUtils'
 import { celebrate } from '@/lib/confetti'
+import { useToastStore } from '@/stores/toastStore'
 
 const HOURS = Array.from({ length: 24 }, (_, i) =>
   String(i).padStart(2, '0') + ':00'
@@ -33,6 +34,7 @@ export function SlotCreateModal({ date, onCreated, onClose }) {
   const [hour, setHour] = useState(defaultHour ?? '')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const addToast = useToastStore((s) => s.addToast)
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -53,11 +55,15 @@ export function SlotCreateModal({ date, onCreated, onClose }) {
       onCreated(slot)
       onClose()
       celebrate()
+      addToast('Slot created!')
     } catch (e) {
       const msg = e?.message || ''
-      if (msg.includes('409')) setError('You already have a slot at this time.')
-      else if (msg.includes('422')) setError('This time is too soon. Slots need 25 h notice.')
-      else setError('Could not create slot. Please try again.')
+      let errorMsg
+      if (msg.includes('409')) errorMsg = 'You already have a slot at this time.'
+      else if (msg.includes('422')) errorMsg = 'This time is too soon. Slots need 25 h notice.'
+      else errorMsg = 'Could not create slot. Please try again.'
+      setError(errorMsg)
+      addToast(errorMsg, 'error')
     } finally {
       setLoading(false)
     }
