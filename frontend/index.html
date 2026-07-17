@@ -7,12 +7,14 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>iMeet</title>
+    <script>
+      (function () {
+        var s = localStorage.getItem('imeet_theme')
+        var dark = s ? s === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
+        if (dark) document.documentElement.classList.add('dark')
+      })()
+    </script>
     <style>
-      /* Inlined so the splash paints immediately on load, before the app's
-         own CSS/JS bundle has arrived — the whole point of a splash screen
-         is covering that gap, so it can't depend on the thing it's covering
-         for. main.jsx fades #app-splash out and removes it once React has
-         mounted. */
       #app-splash {
         position: fixed;
         inset: 0;
@@ -23,6 +25,9 @@
         justify-content: center;
         gap: 22px;
         background: #faf7f5;
+      }
+      .dark #app-splash {
+        background: #141414;
         transition: opacity 0.45s ease;
       }
       #app-splash img {
