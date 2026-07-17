@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react'
 import { api } from '@/services/api'
 import { RoleBadge, Chip } from '@/components/atoms'
 import { useToastStore } from '@/stores/toastStore'
+import { useAuthStore } from '@/stores/authStore'
 
 const ROLES = ['trainee', 'volunteer', 'admin']
 const FILTERS = ['all', ...ROLES]
 
-function UserCard({ user, onRoleChange }) {
+function UserCard({ user, isSelf, onRoleChange }) {
   const [updating, setUpdating] = useState(false)
 
   const handleChange = async (e) => {
@@ -18,7 +19,9 @@ function UserCard({ user, onRoleChange }) {
   return (
       <div className="rounded-2xl border border-border bg-card p-5 shadow-[var(--shadow-soft-sm)] flex flex-col sm:flex-row sm:items-center gap-4">
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold text-foreground truncate">{user.name}</p>
+          <p className="text-sm font-semibold text-foreground truncate">
+            {user.name}{isSelf && <span className="text-muted-foreground font-normal"> (you)</span>}
+          </p>
           <p className="text-xs text-muted-foreground mt-0.5 truncate">{user.email}</p>
         </div>
         <div className="flex items-center gap-3">
@@ -26,7 +29,7 @@ function UserCard({ user, onRoleChange }) {
           <select
             value={user.role}
             onChange={handleChange}
-            disabled={updating}
+            disabled={updating || isSelf}
             className="rounded-xl border border-border bg-card px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition disabled:opacity-50"
           >
             {ROLES.map((r) => (
@@ -44,6 +47,7 @@ export default function AdminUsersPage() {
   const [error, setError]   = useState(null)
   const [filter, setFilter] = useState('all')
   const addToast = useToastStore((s) => s.addToast)
+  const currentUser = useAuthStore((s) => s.user)
 
   useEffect(() => {
     api.getUsers()
@@ -109,7 +113,7 @@ export default function AdminUsersPage() {
               </div>
               <div className="flex flex-col gap-3">
                 {filteredUsers.map((user) => (
-                  <UserCard key={user.id} user={user} onRoleChange={handleRoleChange} />
+                  <UserCard key={user.id} user={user} isSelf={currentUser?.id === user.id} onRoleChange={handleRoleChange} />
                 ))}
               </div>
             </>
