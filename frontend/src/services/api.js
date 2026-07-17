@@ -24,7 +24,13 @@ async function request(endpoint, { method = 'GET', body, mock } = {}) {
   })
 
   if (!res.ok) {
-    throw new Error(`API error: ${res.status}`)
+    const errorBody = await res.text()
+    let detail = `API error: ${res.status}`
+    try {
+      const parsed = JSON.parse(errorBody)
+      if (parsed.detail) detail = parsed.detail
+    } catch {}
+    throw new Error(detail)
   }
 
   const text = await res.text()
