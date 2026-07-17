@@ -7,6 +7,7 @@ import { formatDate, formatTime } from '@/lib/dateUtils'
 import { googleCalendarUrl, shareBooking } from '@/lib/calendar'
 import { celebrate } from '@/lib/confetti'
 import { api } from '@/services/api'
+import { useToastStore } from '@/stores/toastStore'
 
 const stepVariants = {
   enter: { opacity: 0, x: 16 },
@@ -21,6 +22,7 @@ export function SlotFlowSheet({ slot, onClose, onBooked }) {
   const [error, setError] = useState(null)
   const [booking, setBooking] = useState(null)
   const [shareStatus, setShareStatus] = useState(null)
+  const addToast = useToastStore((s) => s.addToast)
 
   const handleClose = () => {
     onClose()
@@ -46,11 +48,15 @@ export function SlotFlowSheet({ slot, onClose, onBooked }) {
       setStep('success')
       onBooked(slot.id)
       celebrate()
+      addToast('Booking confirmed!')
     } catch (e) {
       const msg = e?.message || ''
-      if (msg.includes('409')) setError('This slot was just booked by someone else.')
-      else if (msg.includes('422')) setError('The booking window for this slot has passed.')
-      else setError('Something went wrong. Please try again.')
+      let errorMsg
+      if (msg.includes('409')) errorMsg = 'This slot was just booked by someone else.'
+      else if (msg.includes('422')) errorMsg = 'The booking window for this slot has passed.'
+      else errorMsg = 'Something went wrong. Please try again.'
+      setError(errorMsg)
+      addToast(errorMsg, 'error')
     } finally {
       setSubmitting(false)
     }

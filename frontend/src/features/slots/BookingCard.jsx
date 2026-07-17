@@ -4,6 +4,7 @@ import { Avatar, Badge, Button, Card } from '@/components/atoms'
 import { api } from '@/services/api'
 import { cn } from '@/lib/cn'
 import { formatDate, formatTime } from '@/lib/dateUtils'
+import { useToastStore } from '@/stores/toastStore'
 
 const MotionCard = motion(Card)
 
@@ -18,6 +19,7 @@ export function BookingCard({ booking, index = 0, onDelete }) {
   const [confirm, setConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [deleteError, setDeleteError] = useState(null)
+  const addToast = useToastStore((s) => s.addToast)
 
   const handleDelete = async () => {
     setDeleting(true)
@@ -25,10 +27,14 @@ export function BookingCard({ booking, index = 0, onDelete }) {
     try {
       await api.deleteBooking(booking.id)
       onDelete(booking.id)
+      addToast('Booking cancelled')
     } catch (e) {
       const msg = e?.message || ''
-      if (msg.includes('403')) setDeleteError('You can only cancel your own bookings.')
-      else setDeleteError('Could not cancel booking. Please try again.')
+      let errorMsg
+      if (msg.includes('403')) errorMsg = 'You can only cancel your own bookings.'
+      else errorMsg = 'Could not cancel booking. Please try again.'
+      setDeleteError(errorMsg)
+      addToast(errorMsg, 'error')
       setConfirm(false)
     } finally {
       setDeleting(false)

@@ -12,7 +12,7 @@ export default function MySlots() {
   const { slots, state, reload, addSlot, removeSlot, cancelSlotBooking } = useMySlots()
   const [selectedDate, setSelectedDate] = useState(null)
   const [modalDate, setModalDate] = useState(null)
-  const [filter, setFilter] = useState('all')
+  const [filter, setFilter] = useState('available')
 
   // Build markedDates from slots for the calendar
   const markedDates = useMemo(() => {
@@ -29,10 +29,12 @@ export default function MySlots() {
     return map
   }, [slots])
 
+  const availableCount = useMemo(() => slots.filter((s) => !s.is_booked).length, [slots])
+  const bookedCount = useMemo(() => slots.filter((s) => s.is_booked).length, [slots])
+
   const filtered = useMemo(() => {
     if (filter === 'available') return slots.filter((s) => !s.is_booked)
-    if (filter === 'booked') return slots.filter((s) => s.is_booked)
-    return slots
+    return slots.filter((s) => s.is_booked)
   }, [slots, filter])
 
   const handleDayClick = (dateStr) => {
@@ -66,9 +68,8 @@ export default function MySlots() {
         </div>
 
         <div className="flex gap-2 mb-6">
-          <Chip selected={filter === 'all'} onClick={() => setFilter('all')}>All</Chip>
-          <Chip selected={filter === 'available'} onClick={() => setFilter('available')}>Available</Chip>
-          <Chip selected={filter === 'booked'} onClick={() => setFilter('booked')}>Booked</Chip>
+          <Chip selected={filter === 'available'} onClick={() => setFilter('available')}>Available ({availableCount})</Chip>
+          <Chip selected={filter === 'booked'} onClick={() => setFilter('booked')}>Booked ({bookedCount})</Chip>
         </div>
 
         {state === 'loading' && (
