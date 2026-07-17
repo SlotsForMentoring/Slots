@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { api } from '@/services/api'
 import { RoleBadge, Chip } from '@/components/atoms'
+import { useToastStore } from '@/stores/toastStore'
 
 const ROLES = ['trainee', 'volunteer', 'admin']
 const FILTERS = ['all', ...ROLES]
@@ -42,6 +43,7 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError]   = useState(null)
   const [filter, setFilter] = useState('all')
+  const addToast = useToastStore((s) => s.addToast)
 
   useEffect(() => {
     api.getUsers()
@@ -55,8 +57,13 @@ export default function AdminUsersPage() {
     : users.filter((user) => user.role === filter)
 
   const handleRoleChange = async (userId, newRole) => {
-    const updated = await api.updateUserRole(userId, newRole)
-    setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)))
+    try {
+      const updated = await api.updateUserRole(userId, newRole)
+      setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)))
+      addToast('Role updated')
+    } catch {
+      addToast('Could not update role', 'error')
+    }
   }
 
   return (
