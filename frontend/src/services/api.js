@@ -70,6 +70,9 @@ export const api = {
   getUsers: (mock) =>
     request('/admin/users', { mock }),
 
+  getAllSlots: (mock) =>
+    request('/admin/slots', { mock }),
+
   updateUserRole: (id, role, mock) =>
     request(`/admin/users/${id}/role`, {
       method: 'PATCH',
