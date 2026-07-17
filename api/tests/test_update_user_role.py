@@ -1,3 +1,5 @@
+import uuid as uuid_mod
+
 import pytest
 from datetime import datetime, timezone
 from unittest.mock import AsyncMock, patch
@@ -134,6 +136,30 @@ async def test_role_change_triggers_data_reset(mock_get, mock_update, mock_reset
     )
     assert response.status_code == 200
     mock_reset.assert_called_once()
+
+
+@pytest.mark.asyncio
+async def test_admin_cannot_change_own_role(client):
+    admin_id = uuid_mod.UUID("00000000-0000-0000-0000-000000000001")
+
+    def fake_admin_with_uuid():
+        return User(
+            id=admin_id,
+            google_id="admin-google-id",
+            email="admin@example.com",
+            name="Admin User",
+            role="admin",
+            created_at=NOW,
+            updated_at=NOW,
+        )
+
+    app.dependency_overrides[get_current_user] = fake_admin_with_uuid
+    response = await client.patch(
+        f"/admin/users/{admin_id}/role",
+        json={"role": "trainee"},
+    )
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Cannot change your own role"
 
 
 @pytest.mark.asyncio
