@@ -6,9 +6,6 @@ import { useAuthStore, GREETED_KEY } from '@/stores/authStore'
 import { Avatar, Button, Heading, Logo } from '@/components/atoms'
 import { cn } from '@/lib/cn'
 
-// Placeholder photo for the hero's product-preview mockups (they show a
-// fictional "Sarah Kim", not a real user, so a generated placeholder photo
-// service is the right fit here — same idea as lorem-picsum for images).
 const DEMO_AVATAR_URL = 'https://i.pravatar.cc/150?img=47'
 
 const MotionHeading = motion(Heading)
@@ -43,40 +40,79 @@ const WELCOME_COPY = {
   },
 }
 
+const SPLASH_DELAY = 3000
+
 function WelcomeHero({ user, onNavigate }) {
   const firstName = user.name?.split(' ')[0] ?? user.name
   const copy = WELCOME_COPY[user.role] ?? WELCOME_COPY.trainee
+  const dest = roleHome(user)
+
+  useEffect(() => {
+    const id = setTimeout(() => onNavigate(dest, { replace: true }), SPLASH_DELAY)
+    return () => clearTimeout(id)
+  }, [])
+
+  const roleLabel =
+    user.role === 'volunteer' ? 'Volunteer mentor'
+    : user.role === 'admin' ? 'Admin'
+    : 'Trainee'
 
   return (
-    <section className="relative overflow-hidden min-h-[70vh] flex items-center">
-      <div aria-hidden="true" className="absolute inset-x-0 -top-40 -z-10 overflow-hidden blur-3xl">
-        <div className="relative left-1/2 w-[36rem] sm:w-[72rem] -translate-x-1/2 rotate-[30deg] aspect-[1155/678] bg-gradient-to-tr from-flame-400 to-flame-200 opacity-20" />
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-background">
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-1/3 top-1/4 h-72 w-72 rounded-full bg-flame-400 opacity-20 blur-3xl" />
+        <div className="absolute right-1/3 bottom-1/4 h-64 w-64 rounded-full bg-flame-600 opacity-15 blur-3xl" />
       </div>
 
-      <div className="mx-auto max-w-2xl px-5 py-16 sm:px-6 sm:py-28 text-center">
-        <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-flame-200 dark:border-flame-800 bg-flame-50 dark:bg-flame-500/10 px-3 py-1 text-xs sm:text-sm text-flame-700 dark:text-flame-300">
-          <span className="h-1.5 w-1.5 rounded-full bg-flame-500 shrink-0" />
-          {user.role === 'volunteer' ? 'Volunteer mentor' : user.role === 'admin' ? 'Admin' : 'Trainee'}
+      <motion.div
+        className="relative flex flex-col items-center text-center px-6"
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      >
+        {user.profile_picture ? (
+          <img
+            src={user.profile_picture}
+            alt={user.name}
+            referrerPolicy="no-referrer"
+            className="w-20 h-20 rounded-full object-cover ring-4 ring-flame-500/30 shadow-lg mb-5"
+          />
+        ) : (
+          <div className="w-20 h-20 rounded-full bg-flame-500 flex items-center justify-center text-2xl font-bold text-white ring-4 ring-flame-500/30 shadow-lg mb-5">
+            {user.name?.[0]?.toUpperCase() ?? '?'}
+          </div>
+        )}
+
+        <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-flame-200 dark:border-flame-800 bg-flame-50 dark:bg-flame-500/10 px-3 py-1 text-xs font-medium text-flame-700 dark:text-flame-300">
+          <span className="h-1.5 w-1.5 rounded-full bg-flame-500" />
+          {roleLabel}
         </div>
 
         <Heading level="h1">Hello, {firstName}.</Heading>
 
-        <p className="mt-4 sm:mt-6 text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
+        <p className="mt-4 text-base sm:text-lg text-muted-foreground max-w-sm leading-relaxed">
           {copy.subtitle}
         </p>
 
-        <div className="mt-8 sm:mt-10">
-          <Button size="lg" onClick={() => onNavigate(copy.to)}>
-            {copy.cta} →
-          </Button>
+        <button
+          onClick={() => onNavigate(dest, { replace: true })}
+          className="mt-8 text-sm text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
+        >
+          {copy.cta} →
+        </button>
+
+        <div className="mt-6 w-48 h-0.5 rounded-full bg-muted overflow-hidden">
+          <div
+            className="h-full bg-flame-500 rounded-full"
+            style={{ animation: `progress-fill ${SPLASH_DELAY}ms linear forwards` }}
+          />
         </div>
-      </div>
-    </section>
+        <p className="mt-2 text-xs text-muted-foreground">Taking you there in 3 seconds…</p>
+      </motion.div>
+    </div>
   )
 }
 
-// Static, non-interactive mockups of real screens from the app, cycled
-// below as a little product-preview carousel.
 function BookingConfirmedMockup() {
   return (
     <>
@@ -166,8 +202,6 @@ function UpcomingBookingMockup() {
   )
 }
 
-// Fades + slides content in every time it scrolls into view (replays on
-// scroll-back), and back out again as it leaves.
 function Reveal({ children, delay = 0, className }) {
   return (
     <motion.div
@@ -187,8 +221,6 @@ const SCREENS = [BookingConfirmedMockup, SlotCardMockup, UpcomingBookingMockup]
 
 function BookingScreenshot({ className }) {
   const [index, setIndex] = useState(0)
-  // Peek amount for the side cards shrinks on narrow phones so they don't
-  // clip against the screen edge (they're only fully visible ~375px+).
   const [peek, setPeek] = useState(() => (typeof window !== 'undefined' && window.innerWidth < 380 ? 30 : 54))
 
   useEffect(() => {
@@ -206,15 +238,6 @@ function BookingScreenshot({ className }) {
 
   return (
     <div className={cn('isolate relative mx-auto my-10 h-[360px] w-full max-w-[360px] sm:my-12 sm:h-[420px] sm:max-w-[420px]', className)}>
-      {/* Four crisp, solid-filled shapes orbiting the screenshot's center
-          like watch hands — a zero-size "pivot" at dead center rotates at
-          a constant speed, and each shape sits at a fixed distance from
-          it, so it sweeps in a perfect circle instead of drifting around.
-          Four different speeds/directions so they read as independent
-          hands, not one thing spinning (CSS keyframes, see index.css, so
-          it always runs and backs off for prefers-reduced-motion). Each
-          hand also fades in one after another on mount (staggered delay),
-          rather than all four just appearing at once. */}
       <motion.div
         aria-hidden="true"
         initial={{ opacity: 0 }}
@@ -252,10 +275,6 @@ function BookingScreenshot({ className }) {
         <div className="absolute h-16 w-16 -translate-x-1/2 -translate-y-[calc(50%+108px)] bg-emerald-300 [clip-path:polygon(50%_0%,0%_100%,100%_100%)] sm:h-20 sm:w-20 sm:-translate-y-[calc(50%+140px)]" />
       </motion.div>
 
-      {/* Product screenshots — the current one is centered and fully
-          visible, with the previous/next ones peeking out from behind its
-          left and right edges (coverflow style). Solid card background
-          (not translucent) so it reads clearly over the shapes behind it. */}
       {SCREENS.map((Screen, i) => {
         const diff = (i - index + total) % total
         const isCurrent = diff === 0
@@ -278,7 +297,6 @@ function BookingScreenshot({ className }) {
         )
       })}
 
-      {/* Carousel dots */}
       <div className="absolute -bottom-6 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
         {SCREENS.map((_, i) => (
           <span
@@ -299,10 +317,6 @@ export default function LandingPage() {
   const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
 
-  // Only the very first landing on "/" after a fresh sign-in shows the
-  // greeting — checked once per mount, before paint, via sessionStorage.
-  // Any later visit to "/" while already signed in skips straight to
-  // the user's own page instead of re-showing it.
   const [showGreeting] = useState(() => {
     if (!user) return false
     const alreadyGreeted = sessionStorage.getItem(GREETED_KEY) === 'true'
@@ -319,9 +333,6 @@ export default function LandingPage() {
     window.location.href = 'mailto:partners@imeet.app?subject=iMeet%20API%20partnership'
   }
 
-  // First landing on "/" right after sign-in: show the personal greeting.
-  // Any later visit (e.g. clicking the logo) always shows this same main
-  // page — logged-in users just get a "Get started" that jumps into the app.
   if (user && showGreeting) {
     return (
       <div className="[font-family:var(--font-family-sans)] bg-background min-h-screen">
@@ -338,9 +349,6 @@ export default function LandingPage() {
           <div className="relative left-1/2 w-[36rem] sm:w-[72rem] -translate-x-1/2 rotate-[30deg] aspect-[1155/678] bg-gradient-to-tr from-flame-400 to-flame-200 opacity-20" />
         </div>
 
-        {/* ── Left hand — flush with the screen edge, lower, reaching up-right.
-             Slides in from off-screen and fades in on page load, rather
-             than just being there instantly. ── */}
         <motion.img
           src="/hand-left.png"
           alt=""
@@ -352,9 +360,6 @@ export default function LandingPage() {
           draggable={false}
         />
 
-        {/* ── Right hand — flush with the screen edge, higher, reaching down-left.
-             Same entrance, mirrored, slightly later so the two don't slide
-             in in perfect lockstep. ── */}
         <motion.img
           src="/hand-right.png"
           alt=""
@@ -367,12 +372,6 @@ export default function LandingPage() {
         />
 
         <div className="relative mx-auto max-w-2xl px-5 pt-6 pb-16 sm:px-6 sm:pt-8 sm:pb-24 lg:pt-6 lg:pb-20">
-          {/* flex + order below so mobile can show a different stacking
-              order (title, buttons, right hand, cards, left hand - cards
-              sandwiched between the two hands) while lg: keeps the
-              original order (title, cards, buttons) unchanged - the
-              desktop hands are absolutely positioned overlays anyway, so
-              this reordering never touches them. */}
           <div className="flex flex-col text-center">
             <MotionHeading
               level="h1"
@@ -403,9 +402,6 @@ export default function LandingPage() {
               </Button>
             </div>
 
-            {/* Mobile-only: right hand, bled off the true right edge,
-                sitting between the CTA buttons and the card carousel so
-                the cards end up sandwiched between the two hands. */}
             <div className="order-3 relative left-1/2 mt-10 w-screen -translate-x-1/2 lg:hidden">
               <motion.img
                 src="/hand-right.png"
@@ -419,10 +415,6 @@ export default function LandingPage() {
               />
             </div>
 
-            {/* Mobile-only: left hand, bled off the true left edge of the
-                screen — mirrors the desktop treatment (the artwork's wrist
-                already runs off its own canvas) instead of floating
-                centered with a visible cut-off edge in empty space. */}
             <div className="order-5 relative left-1/2 mt-10 w-screen -translate-x-1/2 lg:hidden">
               <motion.img
                 src="/hand-left.png"

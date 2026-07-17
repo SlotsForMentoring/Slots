@@ -130,6 +130,11 @@ body {
 }
 .wave-scroll { animation: wave-scroll 2.2s linear infinite; }
 
+@keyframes progress-fill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-orbit-1, .animate-orbit-2, .animate-orbit-3, .animate-orbit-4, .animate-blob-morph, .wave-scroll { animation: none; }
 }

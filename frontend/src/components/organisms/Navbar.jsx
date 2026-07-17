@@ -5,7 +5,6 @@ import { api } from '@/services/api'
 import { Logo, Button, RoleBadge } from '@/components/atoms'
 import { cn } from '@/lib/cn'
 
-// Which nav links show up depends entirely on the signed-in user's role.
 const NAV_LINKS = {
   trainee:   [
     { label: 'Browse Slots', to: '/slots' },
@@ -72,6 +71,18 @@ export default function Navbar() {
           {user ? (
             <>
               <div className="flex items-center gap-2">
+                {user.profile_picture ? (
+                  <img
+                    src={user.profile_picture}
+                    alt={user.name}
+                    referrerPolicy="no-referrer"
+                    className="w-7 h-7 rounded-full object-cover ring-2 ring-border"
+                  />
+                ) : (
+                  <div className="w-7 h-7 rounded-full bg-flame-500 flex items-center justify-center text-xs font-semibold text-white ring-2 ring-border">
+                    {user.name?.[0]?.toUpperCase() ?? '?'}
+                  </div>
+                )}
                 <span className="text-sm text-muted-foreground">{user.name}</span>
                 <RoleBadge role={user.role} />
               </div>
@@ -108,6 +119,18 @@ export default function Navbar() {
         <div className="sm:hidden border-t border-border bg-card px-4 pb-4">
           {user && (
             <div className="flex items-center gap-2 py-3 mb-1 border-b border-border">
+              {user.profile_picture ? (
+                <img
+                  src={user.profile_picture}
+                  alt={user.name}
+                  referrerPolicy="no-referrer"
+                  className="w-7 h-7 rounded-full object-cover ring-2 ring-border"
+                />
+              ) : (
+                <div className="w-7 h-7 rounded-full bg-flame-500 flex items-center justify-center text-xs font-semibold text-white">
+                  {user.name?.[0]?.toUpperCase() ?? '?'}
+                </div>
+              )}
               <span className="text-sm text-muted-foreground">{user.name}</span>
               <RoleBadge role={user.role} />
             </div>
