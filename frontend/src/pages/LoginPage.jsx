@@ -30,11 +30,6 @@ export default function LoginPage() {
             <Logo size="lg" />
           </div>
 
-          <div className="group mb-5 inline-flex cursor-default items-center gap-2 rounded-full border border-flame-200 bg-flame-50 bg-[length:200%_100%] bg-[position:100%_0] px-3 py-1 text-xs text-flame-700 transition-[background-position,background-image] duration-500 ease-out hover:bg-[position:0%_0] hover:bg-gradient-to-r hover:from-flame-100 hover:via-flame-50 hover:to-flame-100 dark:border-flame-800 dark:bg-flame-500/10 dark:text-flame-300 dark:hover:from-flame-500/20 dark:hover:via-flame-500/10 dark:hover:to-flame-500/20">
-            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-flame-500 transition-transform duration-500 group-hover:scale-125" />
-            1-on-1 mentoring — free, no sign-up fees
-          </div>
-
           <h1 className="[font-family:var(--font-family-display)] text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
             Welcome back
           </h1>
@@ -49,9 +44,6 @@ export default function LoginPage() {
             Sign in with Google
           </Button>
 
-          <p className="mt-5 text-xs text-muted-foreground">
-            No credit card required · Powered by volunteer mentors
-          </p>
         </div>
       </div>
     </div>

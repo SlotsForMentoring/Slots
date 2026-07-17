@@ -14,7 +14,6 @@ export default function MySlots() {
   const [modalDate, setModalDate] = useState(null)
   const [filter, setFilter] = useState('available')
 
-  // Build markedDates from slots for the calendar
   const markedDates = useMemo(() => {
     const map = {}
     slots.forEach((slot) => {
@@ -54,8 +53,6 @@ export default function MySlots() {
       <main className="px-5 pt-6 max-w-5xl mx-auto">
 
         <div className="relative mb-8">
-          {/* Blurred color blobs behind the glass card — this is what the
-              frosted panel's backdrop-blur picks up to create the liquid-glass look */}
           <div aria-hidden="true" className="pointer-events-none absolute -inset-x-10 -top-24 -z-10 h-72 overflow-hidden blur-3xl">
             <div className="absolute left-6 top-0 h-52 w-52 rounded-full bg-flame-400 opacity-50 dark:opacity-30" />
             <div className="absolute right-10 top-8 h-44 w-44 rounded-full bg-flame-600 opacity-40 dark:opacity-25" />
