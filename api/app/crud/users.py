@@ -77,6 +77,7 @@ async def reset_user_data(
                     event_id=slot.booking.event_id,
                     refresh_token=slot.volunteer.google_refresh_token,
                 ))
+                await session.delete(slot.booking)
             await session.delete(slot)
 
     await session.flush()
