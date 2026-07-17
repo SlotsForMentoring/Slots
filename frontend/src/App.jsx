@@ -11,6 +11,7 @@ import LandingPage        from '@/pages/LandingPage'
 import LoginPage          from '@/pages/LoginPage'
 import HomePage           from '@/pages/HomePage'
 import AdminUsersPage     from '@/pages/AdminUsersPage'
+import AdminSlotsPage     from '@/pages/AdminSlotsPage'
 import AvailableSlotsPage from '@/pages/AvailableSlotsPage'
 import MySlots            from '@/pages/MySlots'
 import MyBookings         from '@/pages/MyBookings'
@@ -82,6 +83,7 @@ function AppRoutes() {
 
         <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
           <Route path="/admin/users" element={<AdminUsersPage />} />
+          <Route path="/admin/slots" element={<AdminSlotsPage />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

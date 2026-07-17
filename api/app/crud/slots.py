@@ -105,3 +105,15 @@ async def get_available_slots(
         )
     )
     return list(result.scalars().all())
+
+
+async def get_all_slots(
+    session: AsyncSession,
+) -> list[Slot]:
+    query = (
+        select(Slot)
+        .options(selectinload(Slot.booking).selectinload(Booking.trainee))
+        .order_by(Slot.start_time.desc())
+    )
+    result = await session.execute(query)
+    return list(result.scalars().all())

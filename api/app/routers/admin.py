@@ -3,10 +3,12 @@ from uuid import UUID
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.crud import slots as slots_crud
 from app.crud import users as crud
 from app.database import get_db
 from app.dependencies.auth import require_role
 from app.models.user import User
+from app.schemas.slot import SlotResponse
 from app.schemas.user import RoleUpdate, UserResponse
 from app.services.booking import cancel_meeting
 
@@ -20,6 +22,14 @@ async def list_users(
     _current_user: User = Depends(require_role("admin")),
 ):
     return await crud.get_all_users(session=session, role=role)
+
+
+@router.get("/slots", response_model=list[SlotResponse])
+async def list_all_slots(
+    session: AsyncSession = Depends(get_db),
+    _current_user: User = Depends(require_role("admin")),
+):
+    return await slots_crud.get_all_slots(session=session)
 
 
 @router.patch("/users/{user_id}/role", response_model=UserResponse)
