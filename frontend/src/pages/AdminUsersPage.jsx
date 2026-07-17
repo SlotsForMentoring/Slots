@@ -65,8 +65,8 @@ export default function AdminUsersPage() {
       const updated = await api.updateUserRole(userId, newRole)
       setUsers((prev) => prev.map((u) => (u.id === updated.id ? updated : u)))
       addToast('Role updated')
-    } catch {
-      addToast('Could not update role', 'error')
+    } catch (e) {
+      addToast(e?.message || 'Could not update role', 'error')
     }
   }
 
