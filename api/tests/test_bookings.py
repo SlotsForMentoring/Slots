@@ -43,6 +43,7 @@ def make_mock_slot(start_time=None, min_booking_notice_hours=24):
     slot.start_time = start_time or FUTURE
     slot.end_time = (start_time or FUTURE) + timedelta(hours=1)
     slot.min_booking_notice_hours = min_booking_notice_hours
+    slot.volunteer_profile_picture = None
     return slot
 
 
@@ -54,9 +55,11 @@ def make_mock_booking():
     booking.slot.volunteer_name = "Volunteer User"
     booking.slot.start_time = FUTURE
     booking.slot.end_time = FUTURE + timedelta(hours=1)
+    booking.slot.volunteer_profile_picture = None
     booking.trainee_name = "Trainee User"
     booking.agenda = "Help with React hooks"
     booking.status = "confirmed"
+    booking.meet_link = None
     booking.created_at = NOW
     return booking
 

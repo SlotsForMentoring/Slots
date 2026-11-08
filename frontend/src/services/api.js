@@ -29,7 +29,9 @@ async function request(endpoint, { method = 'GET', body, mock } = {}) {
     try {
       const parsed = JSON.parse(errorBody)
       if (parsed.detail) detail = parsed.detail
-    } catch {}
+    } catch {
+      detail = `API error: ${res.status}`
+    }
     throw new Error(detail)
   }
 

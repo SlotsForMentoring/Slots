@@ -51,6 +51,7 @@ def make_mock_slot(
     slot.id = slot_id
     slot.volunteer_id = volunteer_id
     slot.volunteer_name = "Vera Volunteer"
+    slot.volunteer_profile_picture = None
     slot.start_time = start_time
     slot.end_time = start_time + timedelta(hours=1)
     slot.min_booking_notice_hours = 2
@@ -66,6 +67,7 @@ def make_mock_booking():
     booking.trainee_id = OTHER_USER_ID
     booking.trainee_name = "Tommy Trainee"
     booking.trainee_email = "trainee@example.com"
+    booking.trainee_profile_picture = None
     booking.agenda = "Intro session"
     booking.status = "confirmed"
     return booking
