@@ -1,11 +1,6 @@
 import { useAuthStore } from '@/stores/authStore'
 import { RoleBadge } from '@/components/atoms'
 
-// Note: this page is routed at /home for trainees but isn't linked from the
-// navbar (Navbar's trainee links are "Browse Slots" and "My Bookings") — it
-// looks like early scaffolding from before the design system existed. Kept
-// as a simple account summary and restyled to match the rest of the app;
-// worth confirming whether it should be linked somewhere or removed.
 export default function HomePage() {
   const user = useAuthStore((state) => state.user)
 
